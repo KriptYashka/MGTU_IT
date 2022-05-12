@@ -7,7 +7,7 @@
                     <div class="row align-items-center">
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo">
-                                {%if pagename == "Главная" %}
+                                {% if pagename == "Главная" %}
                                 <a href="#">
                                 {% else %}
                                 <a href="/">
@@ -21,10 +21,8 @@
                                 <nav>
                                     <ul id="navigation">
                                         <li><a href="/">Главная</a></li>
-                                        <li><a href="/about/">О проекте</a></li>
-                                        <li><a href="/activity/">Мероприятия</a></li>
+                                        <li><a href="/about/">О сервисе</a></li>
                                         <li><a href="/projects/">Проекты</a></li>
-                                        <li><a href="/news/">Новости</a></li>
                                         {% if user.is_superuser %}
                                         <li><a href="/admin/" class="text-info">Админ. Панель</a></li>
                                         {% endif %}

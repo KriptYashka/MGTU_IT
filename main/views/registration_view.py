@@ -42,9 +42,9 @@ def registration_page(request):
             context['res'] = "Неверно введены данные"
             return render(request, 'registration/registration.html', context)
 
-        isValid, error = register_exception(form.data['login'], form.data['password'], form.data['email'])
+        is_valid, error = register_exception(form.data['login'], form.data['password'], form.data['email'])
 
-        if not isValid:
+        if not is_valid:
             context['res'] = error
             print(error)
             return render(request, 'registration/registration.html', context)
@@ -61,11 +61,12 @@ def registration_page(request):
         # Проверка обязательных/необязательных полей
         if form.data['fathername'] != "":
             profile.fathername = form.data['fathername']
-        if form.data['birth_year'].isdigit() and form.data['birth_month'].isdigit() and form.data[
-            "birth_day"].isdigit():
+        if form.data['birth_year'].isdigit() and form.data['birth_month'].isdigit() and \
+                form.data["birth_day"].isdigit():
             date = datetime.date(int(form.data['birth_year']),
                                  int(form.data['birth_month']),
-                                 int(form.data['birth_day']))
+                                 int(form.data['birth_day'])
+                                 )
             profile.birth_date = date
         if form.data['location'] != "":
             profile.location = form.data['location']

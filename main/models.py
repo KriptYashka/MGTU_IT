@@ -14,3 +14,19 @@ class Profile(models.Model):
     location = models.CharField(max_length=100)
     education_place = models.CharField(max_length=100, null=True)
     birth_date = models.DateField(null=True)
+    description = models.CharField(max_length=1000)
+
+
+class Mentor(models.Model):
+    id = models.IntegerField(primary_key=True)
+    # status = models.ManyToOneRel()
+
+
+class Project(models.Model):
+    title = models.CharField(max_length=100)
+    img_url = models.FileField(upload_to='news/%Y/%m/')
+    description = models.CharField(max_length=1000)
+    post_datetime = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return "%s" % self.title

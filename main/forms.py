@@ -31,10 +31,17 @@ class CommonFields:
 
 class LoginForm(forms.Form):
     """Форма для страницы логина"""
-    attrs = {"class": "input100", "data-placeholder": "Логин или E-Mail"}
+    attrs = {
+        "class": "input100",
+        "data-placeholder": "Логин или E-Mail",
+    }
     login = forms.CharField(label="Логин", min_length=1, max_length=64, required=True,
                             widget=forms.TextInput(attrs=attrs))
-    attrs = {"class": "input100", "data-placeholder": "Пароль"}
+
+    attrs = {
+        "class": "input100",
+        "data-placeholder": "Пароль"
+    }
     password = forms.CharField(label="Пароль", min_length=1, max_length=64, required=True,
                                widget=forms.PasswordInput(attrs=attrs))
 
