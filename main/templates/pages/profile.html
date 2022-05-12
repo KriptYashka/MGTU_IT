@@ -1,0 +1,70 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+<div class="whole-wrap">
+    <div class="container box_1170">
+        <div class="section-top-border">
+            <div class="row mx-auto">
+                <div class="profile-area">
+                    <nav>
+                        <ul class="navbar navbar-expand-md navbar-dark">
+                            <li class="nav-link active"><a href="profile.html">Профиль</a></li>
+                            <li class="nav-link"><a href="create.html">Создать мероприятие</a></li>
+                            <li class="nav-link"><a href="materials.html">Материалы</a></li>
+                            <li class="nav-link"><a href="enter.html">Вступить в сообщество</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+<!--<h3 class="mb-30">Left Aligned</h3>-->
+            <div class="row">
+                <div class="col-md-3">
+                    <img src="{% static 'img/elements/d.jpg' %}" alt="Изображение профиля" class="img-fluid">
+                </div>
+                <div class="col-md-9 mt-sm-20">
+                    <p>ФИО:</p>
+                    <p>Дата рождения:</p>
+                    <p>Город:</p>
+                    <p>Университет:</p>
+                    <p>О себе:</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-md-8">
+                    <h3 class="mb-30">Заполните личную информацию</h3>
+                    <form action="#">
+                        <div class="mt-10">
+                            <input type="text" name="first_name" placeholder="ФИО"
+                            onfocus="this.placeholder = ''" onblur="this.placeholder = 'ФИО'" required
+                            class="single-input">
+                        </div>
+                        <div class="mt-10">
+                            <input type="date" name="date" placeholder="Дата рождения"
+                            onfocus="this.placeholder = ''" onblur="this.placeholder = 'Дата рождения'" required
+                            class="single-input">
+                        </div>
+                        <div class="mt-10">
+                            <input type="text" name="city" placeholder="Город"
+                            onfocus="this.placeholder = ''" onblur="this.placeholder = 'Город'" required
+                            class="single-input">
+                        </div>
+                        <div class="mt-10">
+                            <input type="text" name="university" placeholder="Университет"
+                            onfocus="this.placeholder = ''" onblur="this.placeholder = 'Университет'" required
+                            class="single-input">
+                        </div>
+                        <div class="mt-10">
+                            <textarea class="single-textarea" placeholder="О себе" onfocus="this.placeholder = ''"
+                            onblur="this.placeholder = 'О себе'" required></textarea>
+                        </div>
+                        <!-- For Gradient Border Use -->
+                        <div class="button-group-area mt-40 pt-4">
+                            <a href="#" class="genric-btn info-border">Отправить</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

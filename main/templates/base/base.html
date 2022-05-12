@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+    {% load bootstrap4 %}
+    {% load static %}
+    {% include 'base/head.html' %}
+    <body>
+        {% include 'base/menu.html' %}
+        {% bootstrap_messages %}
+        {% block content %}{% endblock %}
+        {% include 'base/footer.html' %}
+        {% block extra_js %}
+            {% bootstrap_javascript jquery='full' %}
+        {% endblock %}
+    </body>
+    {% include 'base/scripts.html' %}
+</html>

@@ -1,0 +1,21 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+	<!-- Start Align Area -->
+	<div class="whole-wrap">
+		<div class="container box_1170">
+			<div class="section-top-border">
+				<div class="row">
+					<div class="col-md-3">
+						<img src="{{ img_url }}" alt="" class="img-fluid">
+						<div class="text-muted text-center pt-3">{{ datetime }}</div>
+					</div>
+					<div class="col-md-9 mt-sm-20">
+                        <p>{{ description|safe }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% load static %}
+<footer class="footer">
+        <div class="footer_top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-lg-3">
+                        <div class="footer_widget wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">
+                            <div class="footer_logo">
+                                {% if pagename == "Главная" %}
+                                <a>
+                                {% else %}
+                                <a href="/">
+                                {% endif %}
+                                    <img src="{% static 'img/footer_logo.png' %}" alt="ITEduLeaders">
+                                </a>
+                            </div>
+                            <!--<p>
+                                finloan@support.com <br>
+                                +10 873 672 6782 <br>
+                                600/D, Green road, NewYork
+                            </p>-->
+
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 col-lg-3">
+                        <div class="footer_widget wow fadeInUp" data-wow-duration="1.2s" data-wow-delay=".5s">
+
+                            <ul>
+                               <li><a href="/">Главная</a></li>
+                                <li><a href="/about/">О проекте</a></li>
+                                <li><a href="/news/">Новости</a></li>
+                                <li><a href="/activity/">Мероприятия</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class ="col-xl-6 col-md-12 col-lg-6">
+                        <p class="p-style1">
+                            115419, г. Москва, улица Орджоникидзе, 3с4 <br>
+                            +7 (945) 231-12-33 <br>
+                            help@sciedu.ru <br>
+                            <!--{% now "jS F Y H:i" %}-->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

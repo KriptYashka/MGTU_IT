@@ -1,0 +1,74 @@
+{% load static %}
+<header>
+    <div class="header-area ">
+        <div id="sticky-header" class="main-header-area">
+            <div class="container-fluid ">
+                <div class="header_bottom_border">
+                    <div class="row align-items-center">
+                        <div class="col-xl-3 col-lg-2">
+                            <div class="logo">
+                                {%if pagename == "Главная" %}
+                                <a href="#">
+                                {% else %}
+                                <a href="/">
+                                {% endif %}
+                                    <img src="{% static 'img/logo.png' %}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-7">
+                            <div class="main-menu  d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">
+                                        <li><a href="/">Главная</a></li>
+                                        <li><a href="/about/">О проекте</a></li>
+                                        <li><a href="/news/">Новости</a></li>
+                                        <li><a href="/activity/">Мероприятия</a></li>
+                                        {% if user.is_superuser %}
+                                        <li><a href="/admin/" class="text-info">Админ. Панель</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block">
+                            <div class="Appointment">
+                                <div class="phone_num d-none d-xl-block">
+                                    {% if is_login == True %}
+                                    <a href="/profile/">{{username}}</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="Appointment">
+                                <div class="phone_num d-none d-xl-block">
+                                    {% if is_login == True %}
+                                    <a href="/logout/" class="genric-btn info-border circle">Выйти</a>
+                                    {% else %}
+                                    <a href="/login/" class="genric-btn info-border circle">Войти</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</header>
+{% if bradcam_display == True %}
+<div class="bradcam_area bradcam_bg_1" style="background-image: url({% static 'img/banner/banner2.png' %});">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="bradcam_text">
+                    <h3>{{ pagename }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

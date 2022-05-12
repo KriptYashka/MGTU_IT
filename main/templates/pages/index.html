@@ -1,0 +1,164 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+
+    <div class="slider_area">
+        <div class="single_slider  d-flex align-items-center" style="background-image: url({% static 'img/banner/banner.jpg' %});">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 col-md-6">
+                        <div class="slider_text">
+                            <h5 class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".2s">Добро пожаловать на единую площадку </h5>
+                            <h5 class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".2s">ИТ-сообщества</h5>
+                            <p></p>
+                            <p align="justify" class="wow fadeInLeft" data-wow-duration="1s" data-wow-delay=".4s" class="justify">
+Проект направлен на эффективное и всестороннее содействие цифровой трансформации научных и образовательных организаций,
+                                а также достижение стратегических целей Указа Президента РФ № 474 о национальных целях
+                                развития до 2030 года за счет удобного и непрерывного взаимодействия между руководителями
+                                в сфере цифрового развития образовательных организаций высшего образования, органов
+                                государственной власти, экспертов и представителей ИТ-рынка</p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="ilstration_img wow fadeInRight d-none d-lg-block text-right" data-wow-duration="1s" data-wow-delay=".2s">
+            <img src="img/banner/illustration.png" alt="">
+        </div>-->
+    </div>
+
+    <div class="whole-wrap">
+		<div class="container box_1170">
+            <div class="section-top-border">
+                <h3 class="mb-30"></h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="single-defination">
+                            <h4 class="mb-20">Пользователей в системе</h4>
+                            <p class="p-style">241</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="single-defination">
+                            <h4 class="mb-20">Участников мероприятий</h4>
+                            <p class="p-style">3</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="single-defination">
+                            <h4 class="mb-20">Представителей вузов</h4>
+                            <p class="p-style">33</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+    <!-- slider_area_start -->
+
+    <!-- slider_area_end -->
+
+    <!-- featured_candidates_area_start  -->
+    <div class="featured_candidates_area pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section_title text-center mb-40">
+                        <h3>Новости</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="candidate_active owl-carousel">
+                        {% for article in news %}
+                        <div class="single_candidates text-center">
+                            <div class="thumb">
+                                {% if article.img_url %}
+                                <img src="{{article.img_url}}" alt="">
+                                {% else %}
+                                <img src="{% static 'img/article/1.jpg' %}" alt="">
+                                {% endif %}
+                            </div>
+                            <a href="/news/{{article.id}}"><h4>{{article.title}}</h4></a>
+<!--                            <p>{{article.description}}</p>-->
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="featured_candidates_area pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section_title text-center mb-40">
+                        <h3>Анонсы мероприятий</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="candidate_active owl-carousel">
+                        {% for article in announcements %}
+                        <div class="single_candidates text-center">
+                            <div class="thumb">
+                                {% if article.img_url %}
+                                <img src="{% get_media_prefix %}{{article.img_url}}" alt="">
+                                {% else %}
+                                <img src="{% static 'img/article/1.jpg' %}" alt="">
+                                {% endif %}
+                            </div>
+                            <a href="/announcement/{{article.id}}"><h4>{{article.title}}</h4></a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    <!-- featured_candidates_area_end
+
+        МЕРОПРИЯТИЯ
+     featured_candidates_area_start  -->
+<!--    <div class="featured_candidates_area">-->
+<!--        <div class="container">-->
+<!--            <div class="row">-->
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="section_title text-center mb-40">-->
+<!--                        <h3>Мероприятия</h3>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-lg-12">-->
+<!--                    <div class="candidate_active owl-carousel">-->
+<!--                        <div class="single_candidates text-center">-->
+<!--                            <div class="thumb">-->
+<!--                                <img src="" alt="">-->
+<!--                            </div>-->
+<!--                            <a href="#"><h4>Мероприятие 1</h4></a>-->
+<!--                            <p>Ура, мы создали сайт</p>-->
+<!--                        </div>-->
+<!--                        <div class="single_candidates text-center">-->
+<!--                            <div class="thumb">-->
+<!--                                <img src="" alt="">-->
+<!--                            </div>-->
+<!--                            <a href="#"><h4>Markary Jondon</h4></a>-->
+<!--                            <p>Software Engineer</p>-->
+<!--                        </div>-->
+<!--                        <div class="single_candidates text-center">-->
+<!--                            <div class="thumb">-->
+<!--                                <img src="" alt="">-->
+<!--                            </div>-->
+<!--                            <a href="#"><h4>Markary Jondon</h4></a>-->
+<!--                            <p>Software Engineer</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->

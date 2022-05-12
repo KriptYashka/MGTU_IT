@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+{% block content %}
+	<!-- Start Align Area -->
+	<div class="whole-wrap">
+		<div class="container box_1170">
+			<div class="section-top-border">
+				<div class="row">
+					<div class="col-md-3">
+						<img src="{% get_media_prefix %}{{item.img_url.url}}" alt="" class="img-fluid">
+					</div>
+					<div class="col-md-9 mt-sm-20">
+                        <p>{{ item.description|safe }}</p>
+					</div>
+				</div>
+				<div class="col-md-4 text-center mx-auto">
+					<a href="{{item.url}}" class="p-4">Ссылка на мероприятие</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

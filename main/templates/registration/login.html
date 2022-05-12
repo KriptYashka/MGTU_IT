@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+{% load bootstrap4 %}
+{% block content %}
+
+<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				{{error}}
+				{% if error == '404' %}
+				<div class="error">
+					Неверный логин или пароль
+				</div>
+				{% endif %}
+				<form class="login100-form validate-form" method="post">
+					{% csrf_token %}
+					<span class="login100-form-title p-b-26">
+						Добро пожаловать
+					</span>
+
+					{% for item in form %}
+					<div class="wrap-input100 validate-input">
+						{{ item }}
+						<span class="focus-input100" data-placeholder="{{item.label}}"></span>
+					</div>
+					{% endfor %}
+
+
+					<div class="container-login100-form-btn">
+						<div class="wrap-login100-form-btn">
+							<div class="login100-form-bgbtn"></div>
+							<button class="login100-form-btn">
+								Войти
+							</button>
+						</div>
+					</div>
+
+					<div class="text-center p-t-115">
+						<span class="txt1">
+							У вас нет аккаунта?
+						</span>
+
+						<a class="txt2" href="/registration/">
+							Зарегистрироваться
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="dropDownSelect1"></div>
+
+
+
+
+{% endblock %}

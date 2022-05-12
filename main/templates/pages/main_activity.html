@@ -1,0 +1,118 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+
+<!-- job_listing_area_start  -->
+<div class="job_listing_area plus_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="job_filter white-bg">
+                    <div class="form_inner white-bg">
+                        <h3>Фильтр</h3>
+                        <form action="#">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="single_field">
+                                        <select class="wide">
+                                            <option data-display="Тематика">Тематика</option>
+                                            <option value="1">IT</option>
+                                            <option value="2">Управление </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="single_field">
+                                        <input type="text" placeholder="Период с">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="single_field">
+                                        <input type="text" placeholder="Период по">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="reset_btn">
+                                <button  class="boxed-btn3 w-100" type="submit">Искать</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <style>
+                    .fixed-img-50px{
+                        max-width: 50px;
+                        max-height: 50px;
+                    }
+                </style>
+
+                {% for item in activitys %}
+                <div class="job_lists m-0">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="single_jobs white-bg d-flex justify-content-between">
+                                <div class="jobs_left d-flex align-items-center">
+                                    <div class="thumb">
+                                        <img class="fixed-img-50px" src="{% get_media_prefix %}{{ item.img_url }}" alt="">
+                                    </div>
+                                    <div class="jobs_conetent">
+                                        <a href="/activity/{{ item.id }}"><h4>{{ item.title }}</h4></a>
+                                        <div class="links_locat d-flex align-items-center">
+                                            <div class="location">
+                                                <p> <i class="fa fa-map-marker"></i> IT</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="jobs_right">
+                                    <div class="apply_now">
+
+                                        <a href="/activity/{{ item.id }}" class="boxed-btn3">Регистрация</a>
+                                    </div>
+                                    <div class="date">
+                                        <p>Дата: {{ item.start_datetime }} - {{ item.end_datetime }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="job_lists m-0">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="single_jobs white-bg d-flex justify-content-between">
+                                <div class="jobs_left d-flex align-items-center">
+                                    <div class="thumb">
+                                        <img src="{% static 'img/svg_icon/1.svg' %}" alt="">
+                                    </div>
+                                    <div class="jobs_conetent">
+                                        <a href="#"><h4>Мероприятие 1</h4></a>
+                                        <div class="links_locat d-flex align-items-center">
+                                            <div class="location">
+                                                <p> <i class="fa fa-map-marker"></i> IT</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="jobs_right">
+                                    <div class="apply_now">
+
+                                        <a href="job_details.html" class="boxed-btn3">Регистрация</a>
+                                    </div>
+                                    <div class="date">
+                                        <p>Дата: 31 Jan 2020</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
