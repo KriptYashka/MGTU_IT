@@ -53,7 +53,6 @@ def article_page(request, article_id):
         context['img_url'] = imgtool.get_random_image_url()
     return render(request, template_path, context)
 
-
 def announcement_page(request, page_id):
     """ Страница анонсов """
     context = get_context(request, "Анонс")
@@ -61,4 +60,28 @@ def announcement_page(request, page_id):
     context['item'] = announcement
     context['title'] = announcement.title
     template_path = 'pages/announcement.html'
+    return render(request, template_path, context)
+
+def projects_page(request):
+    """Страница всех проектов"""
+    context = get_context(request, "Проекты")
+    template_path = 'pages/projects.html'
+    return render(request, template_path, context)
+
+def project_page(request, project_id):
+    """Страница проекта"""
+    context = get_context(request, "Проект")
+    template_path = 'pages/project.html'
+    context['id'] = project_id
+    project = Projects.objects.filter(id=project_id)[0]
+    context['title'] = project.title
+    context['pagename'] = project.title
+    context['description'] = texttool.description_to_HTML(project.description)
+    context['datetime'] = project.post_datetime.strftime("%d %b, %Y")
+    if imgtool.is_http_img(str(project.img_url)):
+        context['img_url'] = project.img_url
+    else:
+        context['img_url'] = "/media/" + str(project.img_url)
+    if project.img_url == "" or project.img_url is None:
+        context['img_url'] = imgtool.get_random_image_url()
     return render(request, template_path, context)

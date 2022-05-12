@@ -27,9 +27,13 @@ urlpatterns = [
     path('', main_view.index_page),
     path('about/', main_view.about_page),
     path('profile/', main_view.profile_page),
-    #
-    # path('news/', news_view.news_page),
-    # path('news/<int:article_id>', news_view.article_page),
+
+    path('projects/', news_view.projects_page),
+    path('project/<int:article_id>', news_view.project_page),
+
+    path('news/', news_view.news_page),
+    path('news/<int:article_id>', news_view.article_page),
+
     # path('announcement/<int:id>', news_view.announcement_page),
     #
     # path('activity/', activity_view.main_activity_page),
