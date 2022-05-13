@@ -12,6 +12,8 @@ from django.shortcuts import render
 from main.sitetools import usertool
 from main.sitetools.texttool import get_context
 
+from main.models import Mentor, Student
+
 
 def is_email_valid(e_mail):
     """Проверка почты на валидность"""
@@ -54,10 +56,30 @@ def registration_page(request):
                     last_name=form.data['surname'], date_joined=datetime.datetime.today())
         user.set_password(form.data['password'])
         user.save()
-        # Заполнение профиля
         profile = user.profile
+        if form.data['status'] == "mentor":
+            mentor = Mentor(user=user)
+            mentor.save()
+            profile.status = form.data['status']
+            profile.person_id = mentor.id
+
+        elif form.data['status'] == "student":
+            student = Student(user=user)
+            student.save()
+            profile.status = form.data['status']
+            profile.person_id = student.id
+
+        else:
+            error = "Добавлен несуществующий статус."
+            context['res'] = error
+            print(error)
+            return render(request, 'registration/registration.html', context)
+        user.save()
+
+        # Заполнение профиля
         profile.surname = form.data['surname']
         profile.name = form.data['name']
+
         # Проверка обязательных/необязательных полей
         if form.data['fathername'] != "":
             profile.fathername = form.data['fathername']
@@ -68,10 +90,6 @@ def registration_page(request):
                                  int(form.data['birth_day'])
                                  )
             profile.birth_date = date
-        if form.data['location'] != "":
-            profile.location = form.data['location']
-        if form.data['education_place'] != "":
-            profile.education_place = form.data['education_place']
         profile.save()
 
         context['res'] = "Регистрация успешно завершена!"

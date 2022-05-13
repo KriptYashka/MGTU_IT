@@ -14,49 +14,49 @@ class Profile(models.Model):
     birth_date = models.DateField(null=True)
     description = models.CharField(max_length=1000)
     status = models.CharField(max_length=20)  # Студент/преподаватель/админ
+    person_id = models.IntegerField(null=True)
+    img = models.FileField(upload_to='user_img/%Y')
 
 
 class Theme(models.Model):
     """Класс темы"""
-    id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=64)
 
 
 class Interest(models.Model):
     """Класс интереса"""
-    id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=64)
 
 
 class Student(models.Model):
     """Класс студента"""
-    id = models.UUIDField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     group = models.CharField(max_length=20)
-    status_pay = models.CharField(max_length=20)
-    theme_id = models.UUIDField()
-    mentor_id = models.UUIDField()
+    status_pay = models.CharField(max_length=20, null=True)
+    theme_id = models.IntegerField(null=True)
+    mentor_id = models.IntegerField(null=True)
     interest = models.ManyToManyField(Interest)
 
 
 class Mentor(models.Model):
     """Класс ментора"""
-    id = models.UUIDField(primary_key=True)
-    paid_student_left = models.IntegerField()
-    free_student_left = models.IntegerField()
-    all_student_left = models.IntegerField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    paid_student_left = models.IntegerField(default=0)
+    free_student_left = models.IntegerField(default=0)
+    all_student_left = models.IntegerField(default=0)
     like_student = models.ManyToManyField(Student, related_name="liked_student")
     dislike_student = models.ManyToManyField(Student, related_name="disliked_student")
     interest = models.ManyToManyField(Interest)
 
 
-class Project(models.Model):
-    """Класс проекта студента"""
-    id = models.UUIDField(primary_key=True)
-    title = models.CharField(max_length=100)
-    img_url = models.FileField(upload_to='news/%Y/%m/')
-    description = models.CharField(max_length=1000)
-    post_datetime = models.DateTimeField(auto_now_add=True)
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    """Создание нового Profile, когда создается новый User"""
+    if created:
+        Profile.objects.create(user=instance)
 
-    def __unicode__(self):
-        return "%s" % self.title
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    """Обновление Profile, когда обновляется User"""
+    instance.profile.save()

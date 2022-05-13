@@ -58,9 +58,14 @@ class RegistrationForm(forms.Form):
     birth_day = CommonFields.get_int_field("День")
     birth_month = CommonFields.get_int_field("Месяц")
     birth_year = CommonFields.get_int_field("Год")
-    location = CommonFields.get_title_field("Город")
-    education_place = CommonFields.get_title_field("Образовательное учереждение")
     email = CommonFields.get_title_field("E-Mail")
+    attrs = {
+        "class": "input100",
+        "data-placeholder": "Пароль"
+    }
+    status = forms.ChoiceField(label="Вид аккаунта", required=True,
+                               choices=(("mentor", "Преподаватель"), ("student", "Студент")),
+                               widget=forms.Select(attrs=attrs))
 
 
 class ProfileForm(forms.Form):
