@@ -9,14 +9,14 @@ from django.utils import dateformat
 
 
 def index_page(request):
-    """ Главная страница """
+    """Главная страница"""
     context = get_context(request, "Главная", False)
     template_path = 'pages/index.html'
     return render(request, template_path, context)
 
 
 def about_page(request):
-    """ Страница информации о сайте """
+    """Страница информации о сайте"""
     context = get_context(request, "О проекте")
     template_path = 'pages/about.html'
     return render(request, template_path, context)
@@ -24,7 +24,7 @@ def about_page(request):
 
 @login_required
 def profile_page(request):
-    """ Страница профиля """
+    """Страница профиля"""
     context = get_context(request, "Профиль")
     # user = usertool.get_current_user(request.user.username)
     # profile = user.profile
