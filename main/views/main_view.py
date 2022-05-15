@@ -26,11 +26,28 @@ def about_page(request):
 def profile_page(request):
     """Страница профиля"""
     context = get_context(request, "Профиль")
-    # user = usertool.get_current_user(request.user.username)
-    # profile = user.profile
-    # context['email'] = user.email
-    # context['place_edu'] = profile.education_place
-    # context['birthday'] = profile.birth_date
-    # context['full_name'] = "{} {} {}".format(profile.surname, profile.name, profile.fathername)
+    user = usertool.get_current_user(request.user.username)
+    profile = user.profile
+    context['email'] = user.email
+    context['birthday'] = profile.birth_date
+    context['full_name'] = "{} {} {}".format(profile.surname, profile.name, profile.fathername)
+
+    statuses = {
+        "student": "Студент",
+        "mentor": "Преподаватель",
+        "admin": "Администратор",
+    }
+
+    context['role'] = statuses[profile.status]
+    context['group'] = "СГН3-41Б"
+    if profile.status == "student":
+        current_student = usertool.get_student_by_id(profile.person_id)
+        print(current_student)
+    elif profile.status == "mentor":
+        current_mentor = usertool.get_mentor_by_id(profile.person_id)
+        print(current_mentor)
+    else:
+        pass
+
     template_path = 'pages/profile_yashka.html'
     return render(request, template_path, context)
