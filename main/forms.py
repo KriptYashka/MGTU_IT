@@ -66,6 +66,7 @@ class RegistrationForm(forms.Form):
     status = forms.ChoiceField(label="Вид аккаунта", required=True,
                                choices=(("mentor", "Преподаватель"), ("student", "Студент")),
                                widget=forms.Select(attrs=attrs))
+    group = CommonFields.get_title_field("Группа (если студент)", False)
 
 
 class ProfileForm(forms.Form):

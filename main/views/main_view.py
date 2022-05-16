@@ -22,6 +22,24 @@ def about_page(request):
     return render(request, template_path, context)
 
 
+def get_context_student(context: dict, user):
+    profile = user.profile
+    current_student = usertool.get_student_by_id(profile.person_id)
+
+    # context['group'] = current_student.group
+    context['group'] = "СГН3-41Б"
+    # context['description'] = profile.description
+    context['description'] = "Программист, 20 лет, стаж 4 года работы. Портфолио - РУДН, ШП."
+    theme = usertool.get_theme_by_id(current_student.theme_id)
+    if theme:
+        context['theme'] = theme
+    mentor_id = usertool.get_mentor_by_id(current_student.mentor_id)
+    if mentor_id is not None:
+        mentor = usertool.get_mentor_by_id(mentor_id)
+        context['mentor'] = mentor
+    return context
+
+
 @login_required
 def profile_page(request):
     """Страница профиля"""
@@ -29,7 +47,7 @@ def profile_page(request):
     user = usertool.get_current_user(request.user.username)
     profile = user.profile
     context['email'] = user.email
-    context['birthday'] = profile.birth_date
+    context['birthday'] = profile.birth_date  # По логике бека должен уйти в if-else
     context['full_name'] = "{} {} {}".format(profile.surname, profile.name, profile.fathername)
 
     statuses = {
@@ -38,18 +56,15 @@ def profile_page(request):
         "admin": "Администратор",
     }
 
-    desc = "Программист, 20 лет, стаж 4 года работы. Портфолио - РУДН, ШП."
-    context['description'] = desc
     context['role'] = statuses[profile.status]
-    context['group'] = "СГН3-41Б"
     if profile.status == "student":
-        current_student = usertool.get_student_by_id(profile.person_id)
-        print(current_student)
+        context = get_context_student(context, user)
+        template_path = 'pages/profile_yashka.html'
     elif profile.status == "mentor":
         current_mentor = usertool.get_mentor_by_id(profile.person_id)
-        print(current_mentor)
+        template_path = 'pages/profile_yashka.html'
     else:
-        pass
+        template_path = 'pages/profile_yashka.html'
 
-    template_path = 'pages/profile_yashka.html'
+    #  Карточка закрепленного студента/преподавателя
     return render(request, template_path, context)

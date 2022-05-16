@@ -64,7 +64,8 @@ def registration_page(request):
             profile.person_id = mentor.id
 
         elif form.data['status'] == "student":
-            student = Student(user=user)
+            group = form.data['group']
+            student = Student(user=user, group=group)
             student.save()
             profile.status = form.data['status']
             profile.person_id = student.id
