@@ -38,6 +38,8 @@ def profile_page(request):
         "admin": "Администратор",
     }
 
+    desc = "Программист, 20 лет, стаж 4 года работы. Портфолио - РУДН, ШП."
+    context['description'] = desc
     context['role'] = statuses[profile.status]
     context['group'] = "СГН3-41Б"
     if profile.status == "student":
