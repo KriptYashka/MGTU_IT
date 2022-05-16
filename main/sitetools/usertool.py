@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from main.models import Mentor, Student, Theme, Interest
+from main.models import Mentor, Student, Theme, Interest, Profile
 
 
 def check_user_existence(username, password):
@@ -16,9 +16,26 @@ def get_current_user(username):
     except Exception:
         return None
 
+
 def get_mentor_by_id(mentor_id):
     try:
         return Mentor.objects.get(id=mentor_id)
+    except Exception:
+        return None
+
+
+def get_user_by_mentor_id(mentor_id):
+    try:
+        profile = Profile.objects.get(person_id=mentor_id, status="mentor")
+        user = profile.user
+        return user, profile
+    except Exception:
+        return None, None
+
+
+def get_user_by_student_id(student_id):
+    try:
+        return Profile.objects.get(person_id=student_id, status="student")
     except Exception:
         return None
 

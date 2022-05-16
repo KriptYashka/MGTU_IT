@@ -33,10 +33,8 @@ def get_context_student(context: dict, user):
     theme = usertool.get_theme_by_id(current_student.theme_id)
     if theme:
         context['theme'] = theme
-    mentor_id = usertool.get_mentor_by_id(current_student.mentor_id)
-    if mentor_id is not None:
-        mentor = usertool.get_mentor_by_id(mentor_id)
-        context['mentor'] = mentor
+    user, profile = usertool.get_user_by_mentor_id(current_student.mentor_id)
+    context['user_mentor'] = user
     return context
 
 

@@ -35,6 +35,11 @@
     background: linear-gradient(to right, #538a96, #001d38);
 }
 
+.bg-c-lite-blue {
+    background: -webkit-gradient(linear, left top, right top, from(#f29263), to(#ee5a6f));
+    background: linear-gradient(to right, #487ab6, #100d68);
+}
+
 .user-profile {
     padding: 20px 0
 }
@@ -185,24 +190,24 @@ h6 {
             <div class="col-xl-6 col-md-12">
                 <div class="card user-card-full">
                     <div class="row m-l-0 m-r-0">
-                        <div class="col-sm-4 bg-c-lite-green user-profile">
+                        <div class="col-sm-4 bg-c-lite-blue user-profile">
                             <div class="card-block text-center text-white">
                                 <div class="m-b-25"> <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius" alt="User-Profile-Image"> </div>
                                 <h6 class="f-w-600">
-                                    {% if mentor %}
-                                    {{username}}
+                                    {% if user_mentor %}
+                                    {{user_mentor.username}}
                                     {% else %}
                                     Нет преподавателя
                                     {% endif %}
                                 </h6>
-                                {% if mentor %}
+                                {% if user_mentor %}
                                 <p style="color: #c3d7e8;">
-                                    {{role}}
+                                    Преподаватель
                                 </p> <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                                 {% endif %}
                             </div>
                         </div>
-                        {% if mentor %}
+                        {% if user_mentor %}
                         <div class="col-sm-8">
                         {% else %}
                         <div class="col-sm-8 bg-white d-flex flex-column">
@@ -210,17 +215,21 @@ h6 {
                                 Требуется создать проект и дождаться, когда преподаватель найдёт вас.
                             </div>
                         {% endif %}
-                            {% if mentor %}
+                            {% if user_mentor %}
                             <div class="card-block">
                                 <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Информация</h6>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Email</p>
-                                        <h6 class="text-muted f-w-400">{{email}}</h6>
+                                        <h6 class="text-muted f-w-400">{{user_mentor.email}}</h6>
                                     </div>
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">ФИО</p>
-                                        <h6 class="text-muted f-w-400">{{full_name}}</h6>
+                                        <h6 class="text-muted f-w-400">
+                                            {{user_mentor.profile.surname}}
+                                            {{user_mentor.profile.name}}
+                                            {{user_mentor.profile.fathername}}
+                                        </h6>
                                     </div>
 
                                 </div>
