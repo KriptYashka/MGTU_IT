@@ -7,81 +7,66 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.utils import dateformat
 
-
-def news_page(request):
-    """ Страница всех новостей """
-    row_news_per_page = 4
-    context = get_context(request, "Новости")
-    template_path = 'pages/news.html'
-    news = News.objects.all()
-    pages = len(news) // (row_news_per_page * 4)
-    if len(news) % (row_news_per_page * 4) != 0:
-        pages += 1
-    try:
-        current_page = request.GET['page']
-    except:
-        current_page = "1"
-
-    if current_page is None or not (current_page.isdigit()):
-        current_page = 1
-    current_page = int(current_page)
-    context["count_pages"] = pages
-    min_news_index = (current_page - 1) * row_news_per_page * 4
-    max_news_index = min(current_page * row_news_per_page * 4, len(news))
-
-    context['news'] = imgtool.check_media(news[min_news_index:max_news_index])
-    context['page_nums'] = ["0" + str(item + 1) for item in range(0, pages)]
-
-    return render(request, template_path, context)
+from main.forms import ThemeForm
+from main.models import Theme
 
 
-def article_page(request, article_id):
-    """ Страница новости. Подгружается контент с БД. """
-    context = get_context(request, "Новость")
-    template_path = 'pages/news_content.html'
-    context['id'] = article_id
-    article = News.objects.filter(id=article_id)[0]
-    context['title'] = article.title
-    context['pagename'] = article.title
-    context['description'] = texttool.description_to_HTML(article.description)
-    context['datetime'] = article.post_datetime.strftime("%d %b, %Y")
-    if imgtool.is_http_img(str(article.img_url)):
-        context['img_url'] = article.img_url
-    else:
-        context['img_url'] = "/media/" + str(article.img_url)
-    if article.img_url == "" or article.img_url is None:
-        context['img_url'] = imgtool.get_random_image_url()
-    return render(request, template_path, context)
-
-def announcement_page(request, page_id):
-    """ Страница анонсов """
-    context = get_context(request, "Анонс")
-    announcement = Announcement.objects.filter(id=page_id)[0]
-    context['item'] = announcement
-    context['title'] = announcement.title
-    template_path = 'pages/announcement.html'
-    return render(request, template_path, context)
-
+@login_required
 def projects_page(request):
     """Страница всех проектов"""
     context = get_context(request, "Проекты")
-    template_path = 'pages/projects.html'
+
+    student = usertool.get_student_by_id(request.user.profile.person_id)
+    theme = usertool.get_theme_by_id(student.theme_id)
+    if theme is not None:
+        context['theme_name'] = theme.name
+
+    if student.mentor_id:
+        mentor = usertool.get_mentor_by_id(student.mentor_id)
+        fullname = f"{mentor.user.profile.surname} {mentor.user.profile.name} {mentor.user.profile.fathername}"
+        context['mentor_fullname'] = fullname
+
+    template_path = 'pages/project/projects.html'
     return render(request, template_path, context)
 
-def project_page(request, project_id):
-    """Страница проекта"""
+
+@login_required
+def project_edit_page(request):
+    """Страница создания и редактирования проекта"""
     context = get_context(request, "Проект")
-    template_path = 'pages/project.html'
-    context['id'] = project_id
-    project = Projects.objects.filter(id=project_id)[0]
-    context['title'] = project.title
-    context['pagename'] = project.title
-    context['description'] = texttool.description_to_HTML(project.description)
-    context['datetime'] = project.post_datetime.strftime("%d %b, %Y")
-    if imgtool.is_http_img(str(project.img_url)):
-        context['img_url'] = project.img_url
-    else:
-        context['img_url'] = "/media/" + str(project.img_url)
-    if project.img_url == "" or project.img_url is None:
-        context['img_url'] = imgtool.get_random_image_url()
+    template_path = 'pages/project/project_create.html'
+    if request.user.profile.status != "student":
+        template_path = 'pages/project/projects.html'
+        return render(request, template_path, context)
+
+    student = usertool.get_student_by_id(request.user.profile.person_id)
+    theme = usertool.get_theme_by_id(student.theme_id)
+
+    if request.method == 'GET':
+        context['form'] = ThemeForm
+
+    if request.method == 'POST':
+        template_path = 'pages/project/project_create.html'
+        form = ThemeForm(request.POST)
+        context['form'] = form
+        if not (form.is_valid()):
+            context['res'] = "Неверно введены данные"
+            return render(request, template_path, context)
+
+        student = usertool.get_student_by_id(request.user.profile.person_id)
+        theme_name = form.data["name"]
+        if student.theme_id:
+            theme.name = theme_name
+            theme.save()
+            context['res'] = "Тема обновлена."
+        else:
+            theme = Theme(name=theme_name)
+            theme.save()
+            student.theme_id = theme.id
+            student.save()
+            context['res'] = "Тема создана."
+
+    if theme is not None:
+        context['theme_name'] = theme.name
+
     return render(request, template_path, context)

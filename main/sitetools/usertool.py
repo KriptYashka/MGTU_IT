@@ -40,6 +40,14 @@ def get_user_by_student_id(student_id):
         return None
 
 
+def get_is_exist_theme(student_id):
+    try:
+        student = Student.objects.get(id=student_id)
+        return student.theme_id
+    except Exception:
+        return None
+
+
 def get_student_by_id(student_id):
     try:
         return Student.objects.get(id=student_id)

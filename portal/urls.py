@@ -15,5 +15,5 @@ urlpatterns = [
     path('profile/', main_view.profile_page),
 
     path('projects/', project_view.projects_page),
-    path('project/<int:project_id>', project_view.project_page),
+    path('project/', project_view.project_edit_page),
 ]

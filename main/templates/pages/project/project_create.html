@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+	<!-- Start Align Area -->
+	<div class="whole-wrap">
+		<div class="container box_1170">
+			<form method="POST">
+                {% csrf_token %}
+                <div class="container">
+                    <div class="form-group my-3">
+                        {% for item in form %}
+                        <div class="col mt-2 mb-4 text-center h3 text-info">
+                            {{res}}
+                        </div>
+                        <div class="col mt-2 mb-5 text-center text-info">
+                            Ваша текущая тема: {{theme_name}}
+                        </div>
+                            <div class="row">
+                                <p class="col-5 mr-4 mt-1 text-right">{{ item.label }}</p>
+                                <div class="col form-group">{{ item }}</div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="row mt-3">
+                            <div class="col" align="center">
+                                <button type="submit" class="btn btn-primary" onclick="check_pw()" id="reg_button">Создать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+		</div>
+	</div>
+
+{% endblock %}

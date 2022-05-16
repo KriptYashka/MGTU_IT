@@ -25,7 +25,7 @@ class CommonFields:
     @staticmethod
     def get_editor_field(label="Описание", is_required=True):
         attrs = {"class": "form-control"}
-        return forms.CharField(label=label, min_length=1, max_length=32, required=is_required,
+        return forms.CharField(label=label, min_length=1, max_length=300, required=is_required,
                                widget=forms.Textarea(attrs=attrs))
 
 
@@ -78,16 +78,24 @@ class ProfileForm(forms.Form):
     about = CommonFields.get_title_field("О себе", False)
 
 
-class ActivityForm(forms.Form):
-    title = CommonFields.get_title_field("Название мероприятия")
-    img_url = forms.FileField(label="Обложка мероприятия. Изображение не больше 4 МБ.")
-    url = forms.URLField(label="Ссылка на мероприятия")
-    description = CommonFields.get_editor_field("Описание мероприятия")
-    program = CommonFields.get_editor_field("Программа мероприятия")
-    program_file = forms.FileField(label="Файл программы мероприятия")
-    location = forms.CharField(label="Место проведения")
-    start_datetime = forms.DateTimeField(label="Начало мероприятия")
-    end_datetime = forms.DateTimeField(label="Конец мероприятия")
+# class ActivityForm(forms.Form):
+#     title = CommonFields.get_title_field("Название мероприятия")
+#     img_url = forms.FileField(label="Обложка мероприятия. Изображение не больше 4 МБ.")
+#     url = forms.URLField(label="Ссылка на мероприятия")
+#     description = CommonFields.get_editor_field("Описание мероприятия")
+#     program = CommonFields.get_editor_field("Программа мероприятия")
+#     program_file = forms.FileField(label="Файл программы мероприятия")
+#     location = forms.CharField(label="Место проведения")
+#     start_datetime = forms.DateTimeField(label="Начало мероприятия")
+#     end_datetime = forms.DateTimeField(label="Конец мероприятия")
+
+class InterestForm(forms.Form):
+    name = CommonFields.get_title_field("Название")
+
+
+class ThemeForm(forms.Form):
+    name = CommonFields.get_editor_field("Название темы")
+    # interest = CommonFields.get_title_field("Категория")
 
 # # Классы админской панели
 # class AdminActivityForm(forms.ModelForm):
