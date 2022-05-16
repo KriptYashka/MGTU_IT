@@ -13,7 +13,7 @@
                 </p>
                 <hr class="my-4">
                 {% if theme_name %}
-                    <p>Твоя тема: {{theme_name}}</p>
+                    <p>Ваша тема: {{theme_name}}</p>
                     <p>
                         {% if mentor_fullname %}
                         Твой преподаватель: {{mentor_fullname}}
@@ -25,6 +25,7 @@
                     <p>Создай свою тему, чтобы начать работать над ней вместе с преподавателем!</p>
                 {% endif %}
 
+                {% if user.profile.status == "student" %}
                 <p class="lead">
                 <a class="btn btn-primary btn-lg" href="/project" role="button">
                     {% if theme_name %}
@@ -34,19 +35,32 @@
                     {% endif %}
                 </a>
                 </p>
+                {% endif %}
             </div>
-<!--            <div class="row">-->
+            <div class="row ">
+                {% for project in projects %}
+                <div class="card" style="width: 18rem;">
+                  <img src="{% static 'img/article/1.jpg' %}" class="card-img-top">
+                  <div class="card-body">
+                    <h5 class="card-title">{{project.name}}</h5>
+                    <p class="card-text">{{project.prof_stud.surname}} {{project.prof_stud.name}} {{project.prof_stud.fathername}}</p>
+                    <p class="card-text text-muted">{{project.prof_stud.group}}</p>
+                  </div>
+                </div>
+                {% endfor %}
+            </div>
+
 <!--                {% for project in projects %}-->
 <!--                <div class="col-md-6 col-lg-3">-->
 <!--                    <div class="single_candidates text-center">-->
 <!--                        <div class="thumb">-->
 <!--                            {% if project.img_url %}-->
-<!--                                <img src="{{article.img_url}}" alt="">-->
-<!--                                {% else %}-->
-<!--                                <img src="{% static 'img/article/1.jpg' %}" alt="">-->
-<!--                                {% endif %}-->
+<!--                            <img src="{{article.img_url}}" alt="">-->
+<!--                            {% else %}-->
+<!--                            <img src="{% static 'img/article/1.jpg' %}" alt="">-->
+<!--                            {% endif %}-->
 <!--                        </div>-->
-<!--                        <a href="/news/{{article.id}}"><h4>{{thumb.title}}</h4></a>-->
+<!--                        <h4>{{project.name}}</h4>-->
 <!--                    </div>-->
 <!--                </div>-->
 <!--                {% endfor %}-->

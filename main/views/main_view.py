@@ -26,8 +26,7 @@ def get_context_student(context: dict, user):
     profile = user.profile
     current_student = usertool.get_student_by_id(profile.person_id)
 
-    # context['group'] = current_student.group
-    context['group'] = "СГН3-41Б"
+    context['group'] = current_student.group
     # context['description'] = profile.description
     context['description'] = "Программист, 20 лет, стаж 4 года работы. Портфолио - РУДН, ШП."
     theme = usertool.get_theme_by_id(current_student.theme_id)
@@ -60,6 +59,7 @@ def profile_page(request):
         template_path = 'pages/profile_yashka.html'
     elif profile.status == "mentor":
         current_mentor = usertool.get_mentor_by_id(profile.person_id)
+        context["is_mentor"] = True
         template_path = 'pages/profile_yashka.html'
     else:
         template_path = 'pages/profile_yashka.html'
