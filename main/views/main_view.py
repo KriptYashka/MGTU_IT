@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.utils import dateformat
 
+from main.sitetools.backrequest import MentorRequest, StudentRequest, UserRequest, ThemeRequest, CategoryRequest
+
 
 def index_page(request):
     """Главная страница"""
@@ -22,30 +24,14 @@ def about_page(request):
     return render(request, template_path, context)
 
 
-def get_context_student(context: dict, user):
-    profile = user.profile
-    current_student = usertool.get_student_by_id(profile.person_id)
-
-    context['group'] = current_student.group
-    # context['description'] = profile.description
-    context['description'] = "Программист, 20 лет, стаж 4 года работы. Портфолио - РУДН, ШП."
-    theme = usertool.get_theme_by_id(current_student.theme_id)
-    if theme:
-        context['theme'] = theme
-    user, profile = usertool.get_user_by_mentor_id(current_student.mentor_id)
-    context['user_mentor'] = user
-    return context
-
-
 @login_required
 def profile_page(request):
     """Страница профиля"""
     context = get_context(request, "Профиль")
-    user = usertool.get_current_user(request.user.username)
-    profile = user.profile
-    context['email'] = user.email
-    context['birthday'] = profile.birth_date  # По логике бека должен уйти в if-else
-    context['full_name'] = "{} {} {}".format(profile.surname, profile.name, profile.fathername)
+    template_path = 'pages/profile_yashka.html'
+    user_django = usertool.get_current_user(request.user.username)
+    profile = user_django.profile
+    user_back = UserRequest().get_by_id(profile.uid)
 
     statuses = {
         "student": "Студент",
@@ -53,16 +39,33 @@ def profile_page(request):
         "admin": "Администратор",
     }
 
-    context['role'] = statuses[profile.status]
-    if profile.status == "student":
-        context = get_context_student(context, user)
-        template_path = 'pages/profile_yashka.html'
-    elif profile.status == "mentor":
-        current_mentor = usertool.get_mentor_by_id(profile.person_id)
-        context["is_mentor"] = True
-        template_path = 'pages/profile_yashka.html'
-    else:
-        template_path = 'pages/profile_yashka.html'
+    context['email'] = user_back["email"]
+    current_status = user_back["personStatus"]
+    context['role'] = statuses[current_status]
+    if current_status == "student":
+        student = StudentRequest().get_by_id(user_back["personID"])
+        if student is None:
+            return render(request, 'pages/index.html', context)
+        context['birthday'] = student["birthDate"][:10]
+        context['full_name'] = "{} {} {}".format(student["surname"], student["name"], student["patronymic"])
+        context['group'] = student["group"]
+        context['description'] = student["description"]
+        if student['themeID'] != "00000000-0000-0000-0000-000000000000":
+            context['theme'] = ThemeRequest().get_by_id(student['themeID'])["name"]
+        if student['mentorID'] != "00000000-0000-0000-0000-000000000000":
+            context['user_mentor'] = MentorRequest().get_by_id(student['mentorID'])
 
+    elif current_status == "mentor":
+        mentor = MentorRequest().get_by_id(user_back["personID"])
+        if mentor is None:
+            return render(request, 'pages/index.html', context)
+        context['birthday'] = mentor["birthDate"][:10]
+        context['full_name'] = "{} {} {}".format(mentor["surname"], mentor["name"], mentor["patronymic"])
+        context['description'] = mentor["description"]
+        context["is_mentor"] = True
+
+    for key in context.keys():
+        if context[key] == "None":
+            context[key] = None
     #  Карточка закрепленного студента/преподавателя
     return render(request, template_path, context)

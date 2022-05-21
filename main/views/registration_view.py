@@ -15,6 +15,27 @@ from main.sitetools.texttool import get_context
 from sitetools.backrequest import UserRequest, MentorRequest, StudentRequest
 
 
+def register_user(data, person_id):
+    user_data = {
+        "id": "0",
+        "login": data["login"],
+        "password": data["password"],
+        "email": data["email"],
+        "personstatus": data["status"],
+        "personid": person_id,
+    }
+
+    user_back = UserRequest().create(user_data)
+    user = User(username=data['login'], email=data['email'], first_name=data['name'],
+                last_name=data['surname'], date_joined=datetime.datetime.today())
+    user.set_password(data['password'])
+    user.save()
+    profile = user.profile
+    profile.uid = user_back["id"]
+    profile.save()
+    return 1
+
+
 def register_student(data):
     student_data = {
         "id": "0",
@@ -27,27 +48,10 @@ def register_student(data):
         "Themeid": "00000000-0000-0000-0000-000000000000"
     }
     student = StudentRequest().create(student_data)
-    if student["id"] is None:
+    if student is None:
         return None
 
-    user_data = {
-        "id": "0",
-        "login": data["login"],
-        "password": data["password"],
-        "email": data["email"],
-        "personstatus": "student",
-        "personid": student["id"],
-    }
-
-    user_back = UserRequest().create(user_data)
-    user = User(username=data['login'], email=data['email'], first_name=data['name'],
-                last_name=data['surname'], date_joined=datetime.datetime.today())
-    user.set_password(data['password'])
-    user.save()
-    profile = user.profile
-    profile.uid = user_back["id"]
-    profile.save()
-    return 1
+    return register_user(data, student["id"])
 
 
 def register_mentor(data):
@@ -62,26 +66,10 @@ def register_mentor(data):
         "DNLikePersonsIDs": []
     }
     mentor = MentorRequest().create(mentor_data)
-    if mentor["id"] is None:
+    if mentor is None:
         return None
 
-    user_data = {
-        "id": "0",
-        "login": data["login"],
-        "password": data["password"],
-        "email": data["email"],
-        "personstatus": "mentor",
-        "personid": mentor["id"],
-    }
-
-    user_back = UserRequest().create(user_data)
-    user = User(username=data['login'], email=data['email'], first_name=data['name'],
-                last_name=data['surname'], date_joined=datetime.datetime.today())
-    user.set_password(data['password'])
-    user.save()
-    profile = user.profile
-    profile.uid = user_back["id"]
-    profile.save()
+    return register_user(data, mentor["id"])
 
 
 def is_email_valid(e_mail):

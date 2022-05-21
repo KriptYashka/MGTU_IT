@@ -156,21 +156,23 @@ h6 {
                             <div class="card-block">
                                 <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Информация</h6>
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">Email</p>
+                                    <div class="col-sm-12 mb-2">
+                                        <p class=" f-w-600 mb-0">Email</p>
                                         <h6 class="text-muted f-w-400">{{email}}</h6>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <p class="m-b-10 f-w-600">ФИО</p>
+                                    <div class="col-sm-12 mb-2">
+                                        <p class=" f-w-600 mb-0">ФИО</p>
                                         <h6 class="text-muted f-w-400">{{full_name}}</h6>
                                     </div>
                                 </div>
                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Прочее</h6>
                                 <div class="row">
+                                    {% if not is_mentor %}
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Группа</p>
                                         <h6 class="text-muted f-w-400">{{group}}</h6>
                                     </div>
+                                    {% endif %}
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Дата рождения</p>
                                         <h6 class="text-muted f-w-400">{{birthday}}</h6>
@@ -178,7 +180,13 @@ h6 {
                                 </div>
                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Биография</h6>
                                     <div class="col px-0">
-                                        <h6 class="text-muted f-w-400">{{description}}</h6>
+                                        <h6 class="text-muted f-w-400">
+                                            {% if description %}
+                                            {{description}}
+                                            {% else %}
+                                            Нет данных.
+                                            {% endif %}
+                                        </h6>
                                     </div>
                             </div>
                         </div>
