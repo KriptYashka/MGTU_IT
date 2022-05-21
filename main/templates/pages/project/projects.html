@@ -25,7 +25,7 @@
                     <p>Создай свою тему, чтобы начать работать над ней вместе с преподавателем!</p>
                 {% endif %}
 
-                {% if user.profile.status == "student" %}
+                {% if status == "student" %}
                 <p class="lead">
                 <a class="btn btn-primary btn-lg" href="/project" role="button">
                     {% if theme_name %}
@@ -43,8 +43,8 @@
                   <img src="{% static 'img/article/1.jpg' %}" class="card-img-top">
                   <div class="card-body">
                     <h5 class="card-title">{{project.name}}</h5>
-                    <p class="card-text">{{project.prof_stud.surname}} {{project.prof_stud.name}} {{project.prof_stud.fathername}}</p>
-                    <p class="card-text text-muted">{{project.prof_stud.group}}</p>
+                    <p class="card-text">{{project.student.surname}} {{project.student.name}} {{project.student.patronymic}}</p>
+                    <p class="card-text text-muted">{{project.student.group}}</p>
                   </div>
                 </div>
                 {% endfor %}

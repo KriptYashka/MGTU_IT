@@ -8,41 +8,48 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils import dateformat
 
 from main.forms import ThemeForm
+from main.sitetools.backrequest import MentorRequest, StudentRequest, UserRequest, CategoryRequest, ThemeRequest
 
 
 class Project:
-    def __init__(self, name, prof_stud):
+    def __init__(self, name, student):
         self.name = name
-        self.prof_stud = prof_stud
+        self.student = student
 
 
 @login_required
 def projects_page(request):
     """Страница всех проектов"""
     context = get_context(request, "Проекты")
-    context["user"] = request.user
+    user_django = usertool.get_current_user(request.user.username)
+    profile = user_django.profile
+    user_back = UserRequest().get_by_id(profile.uid)
 
-    # if request.user.profile.status == "student":
-    #     student = usertool.get_student_by_id(request.user.profile.person_id)
-    #     theme = usertool.get_theme_by_id(student.theme_id)
-    #     if theme is not None:
-    #         context['theme_name'] = theme.name
-    #
-    #     if student.mentor_id:
-    #         mentor = usertool.get_mentor_by_id(student.mentor_id)
-    #         fullname = f"{mentor.user.profile.surname} {mentor.user.profile.name} {mentor.user.profile.fathername}"
-    #         context['mentor_fullname'] = fullname
-    #
-    # elif request.user.profile.status == "mentor":
-    #     themes = Theme.objects.all()
-    #     projects = []
-    #     for theme in themes:
-    #         student = usertool.get_student_by_theme_id(theme.id)
-    #         if not student.mentor_id:
-    #             project = Project(theme.name, student.user.profile)
-    #             projects.append(project)
-    #
-    #     context["projects"] = projects
+    status = user_back["personStatus"]
+    context["status"] = status
+    if status == "student":
+        student = StudentRequest().get_by_id(user_back["personID"])
+        theme = ThemeRequest().get_by_id(student["themeID"])
+        if theme is not None:
+            context['theme_name'] = theme["themeName"]
+
+        mentor = MentorRequest().get_by_id(student["mentorID"])
+        if mentor:
+            fullname = "{} {} {}".format(mentor["surname"], mentor["name"], mentor["patronymic"])
+            context['mentor_fullname'] = fullname
+
+    elif status == "mentor":
+        # themes = ThemeRequest().get_all()
+        students = StudentRequest().get_all()
+        projects = []
+        for student in students:
+            if student["themeID"] != "00000000-0000-0000-0000-000000000000" \
+                    and student["mentorID"] == "00000000-0000-0000-0000-000000000000":
+                theme = ThemeRequest().get_by_id(student["themeID"])
+                project = Project(theme["themeName"], student)
+                projects.append(project)
+
+        context["projects"] = projects
 
     template_path = 'pages/project/projects.html'
     return render(request, template_path, context)
