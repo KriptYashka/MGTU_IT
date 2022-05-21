@@ -47,6 +47,41 @@ def register_student(data):
     profile = user.profile
     profile.uid = user_back["id"]
     profile.save()
+    return 1
+
+
+def register_mentor(data):
+    mentor_data = {
+        "id": "0",
+        "name": data["name"],
+        "surname": data["surname"],
+        "patronymic": data["fathername"],
+        "birthdate": f"{data['birth_day']}.{data['birth_month']}.{data['birth_year']}",
+        "InterestsIDs": [],
+        "LikePersonsIDs": [],
+        "DNLikePersonsIDs": []
+    }
+    mentor = MentorRequest().create(mentor_data)
+    if mentor["id"] is None:
+        return None
+
+    user_data = {
+        "id": "0",
+        "login": data["login"],
+        "password": data["password"],
+        "email": data["email"],
+        "personstatus": "mentor",
+        "personid": mentor["id"],
+    }
+
+    user_back = UserRequest().create(user_data)
+    user = User(username=data['login'], email=data['email'], first_name=data['name'],
+                last_name=data['surname'], date_joined=datetime.datetime.today())
+    user.set_password(data['password'])
+    user.save()
+    profile = user.profile
+    profile.uid = user_back["id"]
+    profile.save()
 
 
 def is_email_valid(e_mail):
@@ -88,7 +123,7 @@ def registration_page(request):
         # Заполнение пользователя
         status = form.data['status']
         if status == "mentor":
-            pass
+            register_mentor(form.data)
         elif status == "student":
             register_student(form.data)
         else:
@@ -97,22 +132,11 @@ def registration_page(request):
             print(error)
             return render(request, 'registration/registration.html', context)
 
-        mentor_data = {
-            "id": "0",
-            "name": "Ivan",
-            "surname": "ivanov",
-            "patronymic": "ivanivich",
-            "birthdate": "12.02.2001",
-            "interestsIDs": [],
-            "likePersonsIDs": [],
-            "dnlikePersonsIDs": []
-        }
-
         return redirect('/login/')
 
-    else:
-        form = RegistrationForm()
-        context['form'] = form
+    # Если не было запросов - показываем форму
+    form = RegistrationForm()
+    context['form'] = form
     return render(request, 'registration/registration.html', context)
 
 
