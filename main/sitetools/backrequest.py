@@ -8,9 +8,14 @@ class BackRequest:
     def __init__(self, postfix: str):
         self.postfix = postfix
         self.total_url = url + self.postfix
+        self.headers = {
+            'Content-Type': 'application/json',
+            'Host': 'localhost',
+            'User-Agent': 'PostmanRuntime/7.29.0',
+        }
 
     def get_all(self):
-        response = requests.get(self.total_url)
+        response = requests.get(self.total_url, headers=self.headers)
         result = response.json()
         if response.status_code == 200:
             return result["value"]
@@ -18,23 +23,27 @@ class BackRequest:
 
     def get_by_id(self, obj_id: str):
         self.total_url += f"/{obj_id}"
-        response = requests.get(self.total_url)
+        response = requests.get(self.total_url, headers=self.headers)
         if response.status_code == 200:
             result = response.json()
             return result["value"]
         return None
 
-    def create(self, data: dict):
-        response = requests.post(self.total_url, data=data)
-        return response.status_code
+    def create(self, obj_data: dict):
+        response = requests.post(self.total_url, json=obj_data, headers=self.headers)
+        result = response.json()
+        print(response.status_code)
+        if response.status_code == 200:
+            return result["value"]
+        return None
 
-    def edit(self, data: dict):
-        response = requests.put(self.total_url, data=data)
+    def edit(self, obj_data: dict):
+        response = requests.put(self.total_url, json=obj_data, headers=self.headers)
         return response.status_code
 
     def delete(self, obj_id: str):
         self.total_url += f"/{obj_id}"
-        response = requests.put(self.total_url)
+        response = requests.delete(self.total_url, headers=self.headers)
         return response.status_code
 
 
@@ -69,5 +78,10 @@ class CategoryRequest(BackRequest):
 
 
 if __name__ == '__main__':
+    data = {
+        "id": "3b79529f-a457-4d52-888d-2bfadddbd5e9",
+        "name": "EGOR",
+        "surname": "Kuchuk",
+    }
     res = StudentRequest().get_all()
     print(res)

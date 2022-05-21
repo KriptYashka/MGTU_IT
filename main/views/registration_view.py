@@ -12,7 +12,41 @@ from django.shortcuts import render
 from main.sitetools import usertool
 from main.sitetools.texttool import get_context
 
-from main.models import Mentor, Student
+from sitetools.backrequest import UserRequest, MentorRequest, StudentRequest
+
+
+def register_student(data):
+    student_data = {
+        "id": "0",
+        "name": data["name"],
+        "surname": data["surname"],
+        "patronymic": data["fathername"],
+        "birthdate": f"{data['birth_day']}.{data['birth_month']}.{data['birth_year']}",
+        "Group": data['group'],
+        "Mentorid": "00000000-0000-0000-0000-000000000000",
+        "Themeid": "00000000-0000-0000-0000-000000000000"
+    }
+    student = StudentRequest().create(student_data)
+    if student["id"] is None:
+        return None
+
+    user_data = {
+        "id": "0",
+        "login": data["login"],
+        "password": data["password"],
+        "email": data["email"],
+        "personstatus": "student",
+        "personid": student["id"],
+    }
+
+    user_back = UserRequest().create(user_data)
+    user = User(username=data['login'], email=data['email'], first_name=data['name'],
+                last_name=data['surname'], date_joined=datetime.datetime.today())
+    user.set_password(data['password'])
+    user.save()
+    profile = user.profile
+    profile.uid = user_back["id"]
+    profile.save()
 
 
 def is_email_valid(e_mail):
@@ -24,7 +58,7 @@ def is_email_valid(e_mail):
 def register_exception(_login, _password, _email):
     if len(User.objects.filter(username=_login)) > 0:
         return False, "Пользователь с данным логином уже существует!"
-    if login == "$_del":
+    if _login == "$_del":
         return False, "Логин не может быть '$_del'!"
     if not is_email_valid(_email):
         return False, "E-mail некорректен!"
@@ -52,48 +86,28 @@ def registration_page(request):
             return render(request, 'registration/registration.html', context)
 
         # Заполнение пользователя
-        user = User(username=form.data['login'], email=form.data['email'], first_name=form.data['name'],
-                    last_name=form.data['surname'], date_joined=datetime.datetime.today())
-        user.set_password(form.data['password'])
-        user.save()
-        profile = user.profile
-        if form.data['status'] == "mentor":
-            mentor = Mentor(user=user)
-            mentor.save()
-            profile.status = form.data['status']
-            profile.person_id = mentor.id
-
-        elif form.data['status'] == "student":
-            group = form.data['group']
-            student = Student(user=user, group=group)
-            student.save()
-            profile.status = form.data['status']
-            profile.person_id = student.id
-
+        status = form.data['status']
+        if status == "mentor":
+            pass
+        elif status == "student":
+            register_student(form.data)
         else:
             error = "Добавлен несуществующий статус."
             context['res'] = error
             print(error)
             return render(request, 'registration/registration.html', context)
-        user.save()
 
-        # Заполнение профиля
-        profile.surname = form.data['surname']
-        profile.name = form.data['name']
+        mentor_data = {
+            "id": "0",
+            "name": "Ivan",
+            "surname": "ivanov",
+            "patronymic": "ivanivich",
+            "birthdate": "12.02.2001",
+            "interestsIDs": [],
+            "likePersonsIDs": [],
+            "dnlikePersonsIDs": []
+        }
 
-        # Проверка обязательных/необязательных полей
-        if form.data['fathername'] != "":
-            profile.fathername = form.data['fathername']
-        if form.data['birth_year'].isdigit() and form.data['birth_month'].isdigit() and \
-                form.data["birth_day"].isdigit():
-            date = datetime.date(int(form.data['birth_year']),
-                                 int(form.data['birth_month']),
-                                 int(form.data['birth_day'])
-                                 )
-            profile.birth_date = date
-        profile.save()
-
-        context['res'] = "Регистрация успешно завершена!"
         return redirect('/login/')
 
     else:
