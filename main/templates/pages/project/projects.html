@@ -37,7 +37,7 @@
                 </p>
                 {% endif %}
             </div>
-            <div class="row ">
+            <div class="row">
                 {% for project in projects %}
                 <div class="card" style="width: 18rem;">
                   <img src="{% static 'img/article/1.jpg' %}" class="card-img-top">
@@ -45,27 +45,11 @@
                     <h5 class="card-title">{{project.name}}</h5>
                     <p class="card-text">{{project.student.surname}} {{project.student.name}} {{project.student.patronymic}}</p>
                     <p class="card-text text-muted">{{project.student.group}}</p>
+                    <a href="/project/{project.id}" class="btn btn-primary">Перейти к теме</a>
                   </div>
                 </div>
                 {% endfor %}
             </div>
-
-<!--                {% for project in projects %}-->
-<!--                <div class="col-md-6 col-lg-3">-->
-<!--                    <div class="single_candidates text-center">-->
-<!--                        <div class="thumb">-->
-<!--                            {% if project.img_url %}-->
-<!--                            <img src="{{article.img_url}}" alt="">-->
-<!--                            {% else %}-->
-<!--                            <img src="{% static 'img/article/1.jpg' %}" alt="">-->
-<!--                            {% endif %}-->
-<!--                        </div>-->
-<!--                        <h4>{{project.name}}</h4>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                {% endfor %}-->
-<!--            </div>-->
-
         </div>
     </div>
 {% endblock %}

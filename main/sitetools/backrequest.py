@@ -3,6 +3,8 @@ import json
 
 url = 'http://localhost:5000/'
 
+id_none = "00000000-0000-0000-0000-000000000000"
+
 
 class BackRequest:
     def __init__(self, postfix: str):
