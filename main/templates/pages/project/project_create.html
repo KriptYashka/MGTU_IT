@@ -13,7 +13,11 @@
                             {{res}}
                         </div>
                         <div class="col mt-2 mb-5 text-center text-info">
+                            {% if theme_name %}
                             Ваша текущая тема: {{theme_name}}
+                            {% else %}
+                            Тематика проекта отсутствует.
+                            {% endif %}
                         </div>
                             <div class="row">
                                 <p class="col-5 mr-4 mt-1 text-right">{{ item.label }}</p>

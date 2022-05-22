@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from main.models import Profile
+from main.sitetools.backrequest import UserRequest
 
 
 def check_user_existence(username, password):
