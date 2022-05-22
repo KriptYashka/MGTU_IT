@@ -54,10 +54,12 @@ def projects_page(request):
     return render(request, template_path, context)
 
 
+# http://127.0.0.1:8000/project/b53b0c2b-4c5f-456b-85b9-c33976b6fed0
 @login_required
 def project_page(request, theme_id):
     context = get_context(request, "Проект")
     user_back = UserRequest().get_by_id(request.user.profile.uid)
+    context["user_back"] = user_back
     theme = ThemeRequest().get_by_id(theme_id)
     if theme is None:
         return redirect("/projects")
@@ -69,12 +71,21 @@ def project_page(request, theme_id):
             break
     if current_student is None:
         return redirect("/projects")
+    current_student["full_name"] = "{} {} {}".format(current_student["surname"], current_student["name"],
+                                                     current_student["patronymic"])
+    current_student["birthDate"] = current_student["birthDate"][:10]
+    if current_student["statusPay"] == "free":
+        current_student["status_pay"] = "Бюджет"
+    elif current_student["statusPay"] == "pay":
+        current_student["status_pay"] = "Платная основа"
+    else:
+        current_student["status_pay"] = "Не указано"
     context["student"] = current_student
     context["theme_name"] = theme["themeName"]
     if current_student["mentorID"] != id_none:
         mentor = MentorRequest().get_by_id(current_student["mentorID"])
         context["mentor"] = mentor
-    template_path = "pages/project.html"
+    template_path = "pages/project/project.html"
     return render(request, template_path, context)
 
 
@@ -108,8 +119,8 @@ def project_edit_page(request):
         }
         if student["themeID"] != "00000000-0000-0000-0000-000000000000":
             data["id"] = student["themeID"]
-            theme = ThemeRequest().edit(data)
-            if theme is not None:
+            cod = ThemeRequest().edit(data)
+            if cod is not None:
                 context['res'] = "Тема обновлена."
         else:
             theme = ThemeRequest().create(data)
@@ -122,5 +133,5 @@ def project_edit_page(request):
                 context['res'] = "Тема создана."
 
     if theme is not None:
-        context['theme_name'] = theme["themeName"]
+        context['theme_name'] = str(theme["themeName"])
     return render(request, template_path, context)
