@@ -12,7 +12,7 @@ from django.shortcuts import render
 from main.sitetools import usertool
 from main.sitetools.texttool import get_context
 
-from sitetools.backrequest import UserRequest, MentorRequest, StudentRequest
+from main.sitetools.backrequest import UserRequest, MentorRequest, StudentRequest
 
 
 def register_user(data, person_id):
