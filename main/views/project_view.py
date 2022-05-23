@@ -64,11 +64,10 @@ def projects_page(request):
         my_projects = []
         other_projects = []
         for student in students:
-            if student["themeID"] != id_none \
-                    and student["mentorID"] == id_none:
+            if student["themeID"] != id_none:
                 theme = ThemeRequest().get_by_id(student["themeID"])
                 project = Project(theme["id"], theme["themeName"], student)
-                if student["mentorID"] == user_back["id"]:
+                if student["mentorID"] == user_back["personID"]:
                     my_projects.append(project)
                 else:
                     other_projects.append(project)
