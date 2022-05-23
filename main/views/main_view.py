@@ -51,7 +51,7 @@ def profile_page(request):
         context['group'] = student["group"]
         context['description'] = student["description"]
         if student['themeID'] != "00000000-0000-0000-0000-000000000000":
-            context['theme'] = ThemeRequest().get_by_id(student['themeID'])["name"]
+            context['theme_name'] = ThemeRequest().get_by_id(student['themeID'])["themeName"]
         if student['mentorID'] != "00000000-0000-0000-0000-000000000000":
             context['user_mentor'] = MentorRequest().get_by_id(student['mentorID'])
 

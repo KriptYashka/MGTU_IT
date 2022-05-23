@@ -157,12 +157,22 @@ h6 {
                                 <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Информация</h6>
                                 <div class="row">
                                     <div class="col-sm-12 mb-2">
-                                        <p class=" f-w-600 mb-0">Email</p>
+                                        <p class="f-w-600 mb-0">Email</p>
                                         <h6 class="text-muted f-w-400">{{email}}</h6>
                                     </div>
                                     <div class="col-sm-12 mb-2">
-                                        <p class=" f-w-600 mb-0">ФИО</p>
+                                        <p class="f-w-600 mb-0">ФИО</p>
                                         <h6 class="text-muted f-w-400">{{full_name}}</h6>
+                                    </div>
+                                    <div class="col-sm-12 mb-2">
+                                        <p class="f-w-600 mb-0">Тема проекта</p>
+                                        <h6 class="text-muted f-w-400">
+                                            {% if theme_name %}
+                                            {{ theme_name }}
+                                            {% else %}
+                                            Отсутсвует
+                                            {% endif %}
+                                        </h6>
                                     </div>
                                 </div>
                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Прочее</h6>

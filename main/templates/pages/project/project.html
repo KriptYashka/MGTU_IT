@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-<style>
+<style xmlns="http://www.w3.org/1999/html">
     .padding {
     padding: 3rem !important
 }
@@ -191,9 +191,13 @@ h6 {
                     </div>
                 </div>
                 {% if user_back.personStatus == "mentor" %}
-                <div class="d-grid gap-1 mx-auto col-8 text-center">
-                  <button class="btn btn-primary" type="button">Начать работу со студентом</button>
-                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-grid gap-1 mx-auto col-8 text-center">
+                      <input class="btn btn-primary" type="submit" value="{{register_btn_value}}"
+                             {% if disable %} disabled {% endif %}>
+                    </div>
+                </form>
                 {% endif %}
             </div>
         </div>

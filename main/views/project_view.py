@@ -9,7 +9,7 @@ from django.utils import dateformat
 
 from main.forms import ThemeForm
 from main.sitetools.backrequest import MentorRequest, StudentRequest, UserRequest, \
-    CategoryRequest, ThemeRequest, id_none
+    CategoryRequest, ThemeRequest, EventRequest, id_none
 
 
 class Project:
@@ -17,6 +17,28 @@ class Project:
         self.id = id
         self.name = name
         self.student = student
+
+
+def create_event(student, mentor, theme_name):
+    data_event = {
+        "id": "0",
+
+        "nameS": student["name"],
+        "surnameS": student["surname"],
+        "patronymicS": student["patronymic"],
+        "birthDateS": student["birthDate"],
+        "groupS": student["group"],
+
+        "nameM": mentor["name"],
+        "surnameM": mentor["surname"],
+        "patronymicM": mentor["patronymic"],
+        "birthDateM": mentor["birthDate"],
+
+        "categoryNameID": id_none,
+        "categoryName": None,
+        "themeName": theme_name
+    }
+    EventRequest().create(data_event)
 
 
 @login_required
@@ -38,17 +60,20 @@ def projects_page(request):
             context['mentor_fullname'] = fullname
 
     elif status == "mentor":
-        # themes = ThemeRequest().get_all()
         students = StudentRequest().get_all()
-        projects = []
+        my_projects = []
+        other_projects = []
         for student in students:
             if student["themeID"] != id_none \
                     and student["mentorID"] == id_none:
                 theme = ThemeRequest().get_by_id(student["themeID"])
                 project = Project(theme["id"], theme["themeName"], student)
-                projects.append(project)
-
-        context["projects"] = projects
+                if student["mentorID"] == user_back["id"]:
+                    my_projects.append(project)
+                else:
+                    other_projects.append(project)
+        context["my_projects"] = my_projects
+        context["projects"] = other_projects
 
     template_path = 'pages/project/projects.html'
     return render(request, template_path, context)
@@ -63,6 +88,8 @@ def project_page(request, theme_id):
     theme = ThemeRequest().get_by_id(theme_id)
     if theme is None:
         return redirect("/projects")
+
+    # Поиск студента темы
     students = StudentRequest().get_all()
     current_student = None
     for student in students:
@@ -71,20 +98,62 @@ def project_page(request, theme_id):
             break
     if current_student is None:
         return redirect("/projects")
+
+    # Заполнение данных: ФИО, дата рождения
     current_student["full_name"] = "{} {} {}".format(current_student["surname"], current_student["name"],
                                                      current_student["patronymic"])
     current_student["birthDate"] = current_student["birthDate"][:10]
-    if current_student["statusPay"] == "free":
+    is_free = current_student["statusPay"] == "free"
+    is_pay = current_student["statusPay"] == "pay"
+    # Заполнение данных: платная или бюджетная основа
+    if is_free == "free":
         current_student["status_pay"] = "Бюджет"
-    elif current_student["statusPay"] == "pay":
+    elif is_pay == "pay":
         current_student["status_pay"] = "Платная основа"
     else:
         current_student["status_pay"] = "Не указано"
+
     context["student"] = current_student
     context["theme_name"] = theme["themeName"]
+
+    if request.method == "POST" and user_back["personStatus"] == "mentor":
+        # Распределение в нужную категорию
+        mentor = MentorRequest().get_by_id(user_back["personID"])
+        is_record = True
+        if is_free and mentor["freeStudentsLeft"] > 0:
+            mentor["freeStudentsLeft"] -= 1
+        elif is_pay and mentor["paidStudentsLeft"] > 0:
+            mentor["paidStudentsLeft"] -= 1
+        elif mentor["allStudentsLeft"] > 0:
+            mentor["allStudentsLeft"] -= 1
+        else:
+            is_record = False
+
+        if is_record:
+            MentorRequest().edit(mentor)
+            current_student["mentorID"] = mentor["id"]
+            StudentRequest().edit(current_student)
+            create_event(current_student, mentor, theme["themeName"])
+
+    if user_back["personStatus"] == "mentor":
+        mentor = MentorRequest().get_by_id(user_back["personID"])
+        # Если проект уже составлен
+        if current_student["mentorID"] != id_none:
+            context["disable"] = True
+            context["register_btn_value"] = \
+                "Вы участвуете" if mentor["id"] == user_back["personID"] else "Проект составлен"
+        # Если проект не составлен и есть свободные места
+        elif is_free and mentor["freeStudentsLeft"] > 0 or is_pay and mentor["paidStudentsLeft"] > 0 or mentor["allStudentsLeft"] > 0:
+            context["register_btn_value"] = "Начать работу со студентом"
+        # Если проект не составлен и нет свободных мест
+        else:
+            context["disable"] = True
+            context["register_btn_value"] = "У вас не хватает мест"
+
     if current_student["mentorID"] != id_none:
         mentor = MentorRequest().get_by_id(current_student["mentorID"])
         context["mentor"] = mentor
+
     template_path = "pages/project/project.html"
     return render(request, template_path, context)
 
