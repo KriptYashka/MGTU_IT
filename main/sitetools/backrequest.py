@@ -79,6 +79,14 @@ class CategoryRequest(BackRequest):
         super().__init__("category")
 
 
+def get_user_by_person(person_id):
+    users = UserRequest().get_all()
+    for user in users:
+        if user["personID"] == person_id:
+            return user
+    return None
+
+
 if __name__ == '__main__':
     data = {
         "id": "3b79529f-a457-4d52-888d-2bfadddbd5e9",
