@@ -95,10 +95,11 @@ def profile_page(request):
         context["all_students_left"] = mentor["allStudentsLeft"]
         context["paid_students_left"] = mentor["paidStudentsLeft"]
         context["free_students_left"] = mentor["freeStudentsLeft"]
+        count_all_slot = mentor["allStudentsLeft"] + mentor["paidStudentsLeft"] + mentor["freeStudentsLeft"] + len(mentor_students)
+        context["paid_students_width"] = paid_students / count_all_slot * 100
+        context["free_students_width"] = free_students / count_all_slot * 100
 
-        context["paid_students_width"] = (mentor["paidStudentsLeft"]) / (len(mentor_students) + paid_students) * 100
-        context["free_students_width"] = (mentor["freeStudentsLeft"] - free_students) / (len(mentor_students) + free_students) * 100
-        context["all_students_width"] = 100 - context["free_students_width"] - context["paid_students_width"]
+        # context["all_students_width"] = free_students / count_all_slot * 100
 
         context["student_count"] = mentor["allStudentsLeft"] + paid_students + free_students
         template_path = 'pages/profile_mentor.html'
