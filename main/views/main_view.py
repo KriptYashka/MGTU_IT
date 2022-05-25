@@ -75,6 +75,8 @@ def profile_page(request):
         context["is_mentor"] = True
         students = StudentRequest().get_all()
         mentor_students = []
+        paid_students = 0
+        free_students = 0
         for student in students:
             if student["mentorID"] == mentor["id"]:
                 user = get_user_by_person(student["id"])
@@ -83,9 +85,22 @@ def profile_page(request):
                 student["birthday"] = student["birthDate"][:10]
                 if student['themeID'] != id_none:
                     student['theme_name'] = ThemeRequest().get_by_id(student['themeID'])["themeName"]
+                if student["statusPay"] == "free":
+                    free_students += 1
+                elif student["statusPay"] == "paid":
+                    paid_students += 1
                 mentor_students.append(student)
         if mentor_students is not []:
             context["students"] = mentor_students
+        context["all_students_left"] = mentor["allStudentsLeft"]
+        context["paid_students_left"] = mentor["paidStudentsLeft"]
+        context["free_students_left"] = mentor["freeStudentsLeft"]
+
+        context["paid_students_width"] = (mentor["paidStudentsLeft"]) / (len(mentor_students) + paid_students) * 100
+        context["free_students_width"] = (mentor["freeStudentsLeft"] - free_students) / (len(mentor_students) + free_students) * 100
+        context["all_students_width"] = 100 - context["free_students_width"] - context["paid_students_width"]
+
+        context["student_count"] = mentor["allStudentsLeft"] + paid_students + free_students
         template_path = 'pages/profile_mentor.html'
 
     for key in context.keys():
