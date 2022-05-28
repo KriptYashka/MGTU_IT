@@ -144,16 +144,23 @@ h6 {
             <div class="col-12 mb-5">
                 <div class="col-lg-12">
                     <div class="section_title text-center mb-40">
-                        <h3>Слоты для работы</h3>
+                        <h3>Количество прикрепленных студентов</h3>
                     </div>
                 </div>
 
-                <div class="col-lg-12 progress mb-3 px-0">
+                <div class="col-lg-12 progress mb-5 px-0">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{all_students_width}}%"></div>
-                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{paid_students_width}}%">{{paid_students_left}}</div>
-                    <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{free_students_width}}%">{{free_students_left}}</div>
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{paid_students_width}}%">{{paid_students}}</div>
+                    <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{free_students_width}}%">{{free_students}}</div>
                 </div>
-                <div class="col-lg-12 text-center">
+
+                <div class="col-lg-12">
+                    <div class="section_title text-center mb-40">
+                        <h3>Свободные слоты</h3>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 text-center mb-5">
                     <div class="btn-group" role="group" aria-label="Свободные места">
                         <button class="btn btn-outline-primary" style="width: 200px;">Любая категория: {{all_students_left}}</button>
                         <button class="btn btn-outline-success" style="width: 200px;">Бюджет: {{paid_students_left}}</button>
@@ -161,6 +168,12 @@ h6 {
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-12">
+                    <div class="section_title text-center mb-40">
+                        <h3>Общая информация</h3>
+                    </div>
+                </div>
 
             <!-- Карточка пользователя -->
             <div class="col-xl-6 col-md-12">
@@ -253,8 +266,8 @@ h6 {
                                         </h6>
                                     </div>
                                     <div class="col-sm-12 mb-2">
-                                        <p class="f-w-600 mb-0">Тема проекта</p>
-                                        <h6 class="text-muted f-w-400">
+                                        <p class="f-w-600 mb-0 text-primary">Тема проекта</p>
+                                        <h6 class="text-info f-w-400">
                                             {% if student.theme_name %}
                                             {{student.theme_name}}
                                             {% else %}

@@ -44,6 +44,7 @@ def register_student(data):
         "patronymic": data["fathername"],
         "birthdate": f"{data['birth_day']}.{data['birth_month']}.{data['birth_year']}",
         "Group": data['group'],
+        "statusPay": "paid",
         "Mentorid": "00000000-0000-0000-0000-000000000000",
         "Themeid": "00000000-0000-0000-0000-000000000000"
     }
