@@ -94,9 +94,11 @@ def profile_page(request):
             context["students"] = mentor_students
         context["all_students_left"] = mentor["allStudentsLeft"]
         context["paid_students_left"] = mentor["paidStudentsLeft"]
-        context["paid_students"] = paid_students
+        if paid_students:
+            context["paid_students"] = paid_students
         context["free_students_left"] = mentor["freeStudentsLeft"]
-        context["free_students"] = free_students
+        if free_students:
+            context["free_students"] = free_students
         count_all_slot = mentor["allStudentsLeft"] + mentor["paidStudentsLeft"] + mentor["freeStudentsLeft"] + len(mentor_students)
         context["paid_students_width"] = paid_students / count_all_slot * 100
         context["free_students_width"] = free_students / count_all_slot * 100
