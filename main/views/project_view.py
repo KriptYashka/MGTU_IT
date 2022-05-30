@@ -116,29 +116,48 @@ def project_page(request, theme_id):
     context["theme_name"] = theme["themeName"]
 
     if request.method == "POST" and user_back["personStatus"] == "mentor":
-        # Распределение в нужную категорию
-        mentor = MentorRequest().get_by_id(user_back["personID"])
-        is_record = True
-        if is_free and mentor["freeStudentsLeft"] > 0:
-            mentor["freeStudentsLeft"] -= 1
-        elif is_pay and mentor["paidStudentsLeft"] > 0:
-            mentor["paidStudentsLeft"] -= 1
-        elif mentor["allStudentsLeft"] > 0:
-            mentor["allStudentsLeft"] -= 1
-        else:
-            is_record = False
+        type_request = request.POST.get("type_request")
+        if type_request == "ADD":
+            # Распределение в нужную категорию
+            mentor = MentorRequest().get_by_id(user_back["personID"])
+            is_record = True
+            if is_free and mentor["freeStudentsLeft"] > 0:
+                mentor["freeStudentsLeft"] -= 1
+            elif is_pay and mentor["paidStudentsLeft"] > 0:
+                mentor["paidStudentsLeft"] -= 1
+            elif mentor["allStudentsLeft"] > 0:
+                mentor["allStudentsLeft"] -= 1
+            else:
+                is_record = False
 
-        if is_record:
-            MentorRequest().edit(mentor)
-            current_student["mentorID"] = mentor["id"]
+            if is_record:
+                MentorRequest().edit(mentor)
+                current_student["mentorID"] = mentor["id"]
+                StudentRequest().edit(current_student)
+                # create_event(current_student, mentor, theme["themeName"])
+        elif type_request == "DEL":
+            # Удаление связи ментора и студента
+            mentor = MentorRequest().get_by_id(user_back["personID"])
+            current_student["mentorID"] = id_none
             StudentRequest().edit(current_student)
-            create_event(current_student, mentor, theme["themeName"])
+            if mentor["allStudentsLeft"] == -1:
+                if current_student["statusPay"] == "paid":
+                    mentor["paidStudentsLeft"] += 1
+                elif current_student["statusPay"] == "free":
+                    mentor["freeStudentsLeft"] += 1
+            else:
+                mentor["allStudentsLeft"] += 1
+                MentorRequest().edit(mentor)
 
+            return redirect("/projects")
+
+
+    #  Настройка кнопок на шаблоне
     if user_back["personStatus"] == "mentor":
         mentor = MentorRequest().get_by_id(user_back["personID"])
         # Если проект уже составлен
         if current_student["mentorID"] != id_none:
-            context["disable"] = True
+            context["disable_add_project"] = True
             context["register_btn_value"] = \
                 "Вы участвуете" if mentor["id"] == user_back["personID"] else "Проект составлен"
         # Если проект не составлен и есть свободные места
@@ -146,7 +165,7 @@ def project_page(request, theme_id):
             context["register_btn_value"] = "Начать работу со студентом"
         # Если проект не составлен и нет свободных мест
         else:
-            context["disable"] = True
+            context["disable_add_project"] = True
             context["register_btn_value"] = "У вас не хватает мест"
 
     if current_student["mentorID"] != id_none:

@@ -193,9 +193,16 @@ h6 {
                 {% if user_back.personStatus == "mentor" %}
                 <form method="POST">
                     {% csrf_token %}
-                    <div class="d-grid gap-1 mx-auto col-8 text-center">
+                    <div class="d-grid gap-1 mx-auto col-12 text-center">
+
                       <input class="btn btn-primary" type="submit" value="{{register_btn_value}}"
-                             {% if disable %} disabled {% endif %}>
+                             {% if disable_add_project %} disabled {% endif %}>
+                      {% if disable_add_project %}
+                        <input type="hidden" name="type_request" value="DEL">
+                        <input class="btn btn-outline-danger" type="submit" value="Отказаться от проекта">
+                      {% else %}
+                        <input type="hidden" name="type_request" value="ADD">
+                      {% endif %}
                     </div>
                 </form>
                 {% endif %}
