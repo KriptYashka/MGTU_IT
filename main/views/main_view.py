@@ -15,6 +15,11 @@ def index_page(request):
     """Главная страница"""
     context = get_context(request, "Главная", False)
     template_path = 'pages/index.html'
+    count_mentor = len(MentorRequest().get_all())
+    count_student = len(StudentRequest().get_all())
+    context["count_all"] = count_mentor + count_student
+    context["count_mentor"] = count_mentor
+    context["count_student"] = count_student
     return render(request, template_path, context)
 
 
@@ -99,9 +104,11 @@ def profile_page(request):
         context["free_students_left"] = mentor["freeStudentsLeft"]
         if free_students:
             context["free_students"] = free_students
-        count_all_slot = mentor["allStudentsLeft"] + mentor["paidStudentsLeft"] + mentor["freeStudentsLeft"] + len(mentor_students)
-        context["paid_students_width"] = paid_students / count_all_slot * 100
-        context["free_students_width"] = free_students / count_all_slot * 100
+        count_all_slot = mentor["allStudentsLeft"] + mentor["paidStudentsLeft"] + mentor["freeStudentsLeft"] + len(
+            mentor_students)
+        if count_all_slot:
+            context["paid_students_width"] = paid_students / count_all_slot * 100
+            context["free_students_width"] = free_students / count_all_slot * 100
 
         # context["all_students_width"] = free_students / count_all_slot * 100
 

@@ -33,19 +33,19 @@
                     <div class="col-md-4">
                         <div class="single-defination">
                             <h4 class="mb-20">Пользователей в системе</h4>
-                            <p class="p-style">12</p>
+                            <p class="p-style">{{count_all}}</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="single-defination">
-                            <h4 class="mb-20">Студентов зарегистрировалось</h4>
-                            <p class="p-style">7</p>
+                            <h4 class="mb-20">Студентов</h4>
+                            <p class="p-style">{{count_student}}</p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="single-defination">
-                            <h4 class="mb-20">Преподавателей зарегистрировалось</h4>
-                            <p class="p-style">5</p>
+                            <h4 class="mb-20">Преподавателей</h4>
+                            <p class="p-style">{{count_mentor}}</p>
                         </div>
                     </div>
                 </div>
@@ -57,6 +57,7 @@
     <!-- slider_area_end -->
 
     <!-- featured_candidates_area_start  -->
+{% if news %}
     <div class="featured_candidates_area pt-4">
         <div class="container">
             <div class="row">
@@ -66,6 +67,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="candidate_active owl-carousel">
@@ -79,7 +81,6 @@
                                 {% endif %}
                             </div>
                             <a href="/news/{{article.id}}"><h4>{{article.title}}</h4></a>
-<!--                            <p>{{article.description}}</p>-->
                         </div>
                         {% endfor %}
                     </div>
@@ -87,4 +88,5 @@
             </div>
         </div>
     </div>
+{% endif %}
 {% endblock %}

@@ -47,15 +47,15 @@
             </div>
             <div class="row">
                 {% for project in my_projects %}
-                <div class="col-3 my-2">
-                    <div class="card">
-                      <img src="{% static 'img/article/1.jpg' %}" class="card-img-top">
+                <div class="col-4">
+                    <div class="card ml-5 mb-2" style="min-height:450px">
+                      <img src="{% static project.path %}" class="card-img-top">
                       <div class="card-body">
                         <h5 class="card-title">{{project.name}}</h5>
                         <p class="card-text">{{project.student.surname}} {{project.student.name}} {{project.student.patronymic}}</p>
                         <p class="card-text text-muted">{{project.student.group}}</p>
                         {% if project.id %}
-                        <a href="/project/{{project.id}}" class="btn btn-primary">Перейти к теме</a>
+                        <a href="/project/{{project.id}}" class="btn btn-primary" style="position:relative;bottom:0;">Перейти к теме</a>
                         {% endif %}
                       </div>
                     </div>
@@ -73,15 +73,15 @@
             </div>
             <div class="row">
                 {% for project in projects %}
-                <div class="col-4 mx-2">
-                    <div class="card" style="width: 18rem;">
-                      <img src="{% static 'img/article/1.jpg' %}" class="card-img-top">
+                <div class="col-4">
+                    <div class="card ml-5 mb-2" style="width: 18rem;min-height:450px">
+                      <img src="{% static project.path %}" class="card-img-top">
                       <div class="card-body">
                         <h5 class="card-title">{{project.name}}</h5>
                         <p class="card-text">{{project.student.surname}} {{project.student.name}} {{project.student.patronymic}}</p>
                         <p class="card-text text-muted">{{project.student.group}}</p>
                         {% if project.id %}
-                        <a href="/project/{{project.id}}" class="btn btn-primary">Перейти к теме</a>
+                        <a href="/project/{{project.id}}" class="btn btn-outline-primary">Перейти к теме</a>
                         {% endif %}
                       </div>
                     </div>

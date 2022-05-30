@@ -12,11 +12,20 @@ from main.sitetools.backrequest import MentorRequest, StudentRequest, UserReques
     CategoryRequest, ThemeRequest, EventRequest, id_none
 
 
+def get_rand_num(id: str):
+    sum = 0
+    for symbol in id:
+        if symbol.isnumeric():
+            sum += int(symbol)
+    return sum % 10 + 1
+
+
 class Project:
-    def __init__(self, id, name, student):
+    def __init__(self, id: str, name, student):
         self.id = id
         self.name = name
         self.student = student
+        self.path = f"img/article/{get_rand_num(id)}.jpg"
 
 
 def create_event(student, mentor, theme_name):
