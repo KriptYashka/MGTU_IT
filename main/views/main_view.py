@@ -15,11 +15,11 @@ def index_page(request):
     """Главная страница"""
     context = get_context(request, "Главная", False)
     template_path = 'pages/index.html'
-    count_mentor = len(MentorRequest().get_all())
-    count_student = len(StudentRequest().get_all())
-    context["count_all"] = count_mentor + count_student
-    context["count_mentor"] = count_mentor
-    context["count_student"] = count_student
+    # count_mentor = len(MentorRequest().get_all())
+    # count_student = len(StudentRequest().get_all())
+    # context["count_all"] = count_mentor + count_student
+    # context["count_mentor"] = count_mentor
+    # context["count_student"] = count_student
     return render(request, template_path, context)
 
 
