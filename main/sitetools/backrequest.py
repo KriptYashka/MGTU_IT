@@ -5,6 +5,7 @@ url = 'http://localhost:5000/'
 
 id_none = "00000000-0000-0000-0000-000000000000"
 
+
 class BackRequest:
     def __init__(self, postfix: str):
         self.postfix = postfix
@@ -86,15 +87,97 @@ def get_user_by_person(person_id):
     return None
 
 
-class ModelRequestUser:
-    def __init__(self):
+class ModelRequestBase:
+    def __init__(self, type_req):
         self.id = None
+        self.TypeRequest = type_req
+        self.data = {"id": self.id}
+
+    def load(self, uid):
+        obj = self.TypeRequest().get_by_id(uid)
+        if obj is not None:
+            self.load_data_dict(obj)
+
+    def load_data_dict(self, data_dict):
+        for key in self.data:
+            if key in data_dict.keys():
+                self.data[key] = data_dict[key]
+
+    def create(self, data_dict=None):
+        if data_dict:
+            self.load_data_dict(data_dict)
+        obj = self.TypeRequest().create(self.data)
+        if not obj:
+            return Exception("Неверный запрос")
+        # Обновление объекта
+        self.load_data_dict(obj)
+
+    def edit(self, data_dict=None):
+        if data_dict:
+            self.load_data_dict(data_dict)
+        obj = self.TypeRequest().edit(self.data)
+        if not obj:
+            return Exception("Неверный запрос")
+        # Обновление объекта
+        self.load_data_dict(obj)
+
+    def delete(self):
+        cod = 400
+        if self.id is not None or self.id is not id_none:
+            cod = self.TypeRequest().delete(self.id)
+        if cod != 200:
+            return Exception("Неверный запрос")
+        del self
+
+
+class ModelRequestUser(ModelRequestBase):
+    def __init__(self):
+        super(ModelRequestUser, self).__init__(UserRequest)
         self.login = None
         self.password = None
         self.email = None
         self.person_status = None
         self.person_id = None
         self.photo = None
+
+        self.data = {
+            "id": self.id,
+            "login": self.login,
+            "password": self.password,
+            "email": self.email,
+            "personStatus": self.person_status,
+            "personID": self.person_id,
+            "photo": self.photo,
+        }
+
+        self.req_fields = {
+            "create": ["login", "password"]  # TODO: требуется узнать у Сарибека
+        }
+
+    # def load(self, uid):
+    #     user = UserRequest().get_by_id(uid)
+    #     if user is not None:
+    #         self.load_data_dict(user)
+    #
+    # def load_data_dict(self, data_dict):
+    #     for key in self.data:
+    #         if key in data_dict.keys():
+    #             self.data[key] = data_dict[key]
+    #
+    # def create(self, data_dict=None, model_class=UserRequest):
+    #     if data_dict:
+    #         self.load_data_dict(data_dict)
+    #     requirement = ["login", "password"]
+    #     for key in requirement:
+    #         if self.data[key] is None:
+    #             return Exception("Не введен логин или пароль")
+    #     user = UserRequest().create(self.data)
+    #     if not user:
+    #         return Exception("Неверный запрос")
+    #
+    #
+    # def edit(self, data_dict=None):
+    #     pass
 
 
 class ModelRequestStudent:
@@ -158,10 +241,12 @@ class ModelRequestCategory:
 
 
 if __name__ == '__main__':
+    user = ModelRequestUser()
     data = {
-        "id": "3b79529f-a457-4d52-888d-2bfadddbd5e9",
-        "name": "EGOR",
-        "surname": "Kuchuk",
+        "login": "TestReq",
+        "password": "123",
+        "email": "email@lk.ru",
+        "personStatus": "student",
+        "personID": id_none,
     }
-    res = StudentRequest().get_all()
-    print(res)
+    user.create(data)

@@ -18,9 +18,10 @@
 					</span>
 
 					{% for item in form %}
+					{{item.label}}
 					<div class="wrap-input100 validate-input">
 						{{ item }}
-						<span class="focus-input100" data-placeholder="{{item.label}}"></span>
+						<span class="focus-input100"></span>
 					</div>
 					{% endfor %}
 
