@@ -17,6 +17,11 @@ class BackRequest:
         }
 
     def get_all(self):
+        """
+        Возвращает все объекты таблицы
+
+        :return: Все объекты таблицы
+        """
         response = requests.get(self.total_url, headers=self.headers)
         result = response.json()
         if response.status_code == 200:
@@ -24,6 +29,11 @@ class BackRequest:
         return None
 
     def get_by_id(self, obj_id: str):
+        """
+        Возвращает объект по id
+
+        :return: Объект в таблице
+        """
         self.total_url += f"/{obj_id}"
         response = requests.get(self.total_url, headers=self.headers)
         if response.status_code == 200:
@@ -32,6 +42,11 @@ class BackRequest:
         return None
 
     def create(self, obj_data: dict):
+        """
+        Создает объект с данными словаря
+
+        :return: Статус запроса
+        """
         response = requests.post(self.total_url, json=obj_data, headers=self.headers)
         result = response.json()
         print(response.status_code)
@@ -40,10 +55,20 @@ class BackRequest:
         return None
 
     def edit(self, obj_data: dict):
+        """
+        Изменяет объект по данным словаря
+
+        :return: Статус запроса
+        """
         response = requests.put(self.total_url, json=obj_data, headers=self.headers)
         return response.status_code
 
     def delete(self, obj_id: str):
+        """
+        Удаляет объект по id
+
+        :return: Статус запроса
+        """
         self.total_url += f"/{obj_id}"
         response = requests.delete(self.total_url, headers=self.headers)
         return response.status_code
@@ -93,17 +118,20 @@ class ModelRequestBase:
         self.TypeRequest = type_req
         self.data = {"id": self.id}
 
-    def load(self, uid):
-        obj = self.TypeRequest().get_by_id(uid)
+    def load(self, obj_id):
+        """Находит объект в БД по id"""
+        obj = self.TypeRequest().get_by_id(obj_id)
         if obj is not None:
-            self.load_data_dict(obj)
+             self.load_data_dict(obj)
 
     def load_data_dict(self, data_dict):
+        """Загружает объект по набору данных словаря"""
         for key in self.data:
             if key in data_dict.keys():
                 self.data[key] = data_dict[key]
 
     def create(self, data_dict=None):
+        """Сохранение объекта в БД"""
         if data_dict:
             self.load_data_dict(data_dict)
         obj = self.TypeRequest().create(self.data)
@@ -113,6 +141,7 @@ class ModelRequestBase:
         self.load_data_dict(obj)
 
     def edit(self, data_dict=None):
+        """Изменение объекта в БД"""
         if data_dict:
             self.load_data_dict(data_dict)
         obj = self.TypeRequest().edit(self.data)
@@ -121,8 +150,11 @@ class ModelRequestBase:
         # Обновление объекта
         self.load_data_dict(obj)
 
-    def delete(self):
+    def delete(self, uid=None):
+        """Удаление объекта из БД"""
         cod = 400
+        if uid is not None:
+            self.id = uid
         if self.id is not None or self.id is not id_none:
             cod = self.TypeRequest().delete(self.id)
         if cod != 200:
@@ -154,30 +186,28 @@ class ModelRequestUser(ModelRequestBase):
             "create": ["login", "password"]  # TODO: требуется узнать у Сарибека
         }
 
-    # def load(self, uid):
-    #     user = UserRequest().get_by_id(uid)
-    #     if user is not None:
-    #         self.load_data_dict(user)
-    #
-    # def load_data_dict(self, data_dict):
-    #     for key in self.data:
-    #         if key in data_dict.keys():
-    #             self.data[key] = data_dict[key]
-    #
-    # def create(self, data_dict=None, model_class=UserRequest):
-    #     if data_dict:
-    #         self.load_data_dict(data_dict)
-    #     requirement = ["login", "password"]
-    #     for key in requirement:
-    #         if self.data[key] is None:
-    #             return Exception("Не введен логин или пароль")
-    #     user = UserRequest().create(self.data)
-    #     if not user:
-    #         return Exception("Неверный запрос")
-    #
-    #
-    # def edit(self, data_dict=None):
-    #     pass
+    # def load(self, obj_id):
+    #     super(ModelRequestUser, self).load(obj_id)
+
+    def load_data_dict(self, data_dict):
+        for key in self.data:
+            if key in data_dict.keys():
+                self.data[key] = data_dict[key]
+
+    def create(self, data_dict=None, model_class=UserRequest):
+        if data_dict:
+            self.load_data_dict(data_dict)
+        requirement = ["login", "password"]
+        for key in requirement:
+            if self.data[key] is None:
+                return Exception("Не введен логин или пароль")
+        user = UserRequest().create(self.data)
+        if not user:
+            return Exception("Неверный запрос")
+
+
+    def edit(self, data_dict=None):
+        pass
 
 
 class ModelRequestStudent:
@@ -249,4 +279,25 @@ if __name__ == '__main__':
         "personStatus": "student",
         "personID": id_none,
     }
+    print(user.load("100422c2-4fb9-4817-adf8-d35cdd429a2e"))
     user.create(data)
+
+    freezer = ["potato", "cucumber", "milk"]
+
+    che_to_pohushat = "apple"
+    freezer.append(che_to_pohushat)
+
+    freezer = ["potato", "cucumber", "milk", "potato", "water"]
+    del_index = 2
+    freezer = freezer[:del_index] + freezer[del_index+1:]
+
+    # ['potato', 'cucumber', 'potato', 'water']
+
+    print(freezer)
+
+    dictionary = {
+        "Листок": ["Бумага", "С дерева"],
+        "Дерево": "Растение",
+        "Школа Программистов": "The Best",
+    }
+
