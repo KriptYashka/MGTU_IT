@@ -27,13 +27,17 @@
 
                 {% if status == "student" %}
                 <p class="lead">
-                <a class="btn btn-primary btn-lg" href="/project" role="button">
+                {% if has_mentor %}
+                    <button class="btn btn-success btn-lg" disabled>Тема утверждена</button>
+                {% else %}
+                <button class="btn btn-primary btn-lg" href="/project">
                     {% if theme_name %}
                         Изменить название темы
                     {% else %}
                         Создать свою тему для проекта
                     {% endif %}
-                </a>
+                </button>
+                {% endif %}
                 </p>
                 {% endif %}
             </div>

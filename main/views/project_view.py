@@ -12,23 +12,40 @@ from main.sitetools.backrequest import MentorRequest, StudentRequest, UserReques
     CategoryRequest, ThemeRequest, EventRequest, id_none
 
 
-def get_rand_num(id: str):
+class Project:
+    """
+    Класс проекта, отображаемого на карточках.
+    """
+
+    def __init__(self, project_id: str, name: str, student):
+        self.id = project_id
+        self.name = name
+        self.student = student
+        self.path = f"img/article/{get_rand_num(project_id)}.jpg"
+
+
+def get_rand_num(uid: str):
+    """
+    Возвращает число в зависимости от id nользователя
+
+    :param uid: ID пользователя
+    :return: Число от 1 до 10 в зависимости от id пользователя
+    """
     sum = 0
-    for symbol in id:
+    for symbol in uid:
         if symbol.isnumeric():
             sum += int(symbol)
     return sum % 10 + 1
 
 
-class Project:
-    def __init__(self, id: str, name, student):
-        self.id = id
-        self.name = name
-        self.student = student
-        self.path = f"img/article/{get_rand_num(id)}.jpg"
+def create_event(student: dict, mentor: dict, theme_name: str):
+    """
+    Передает данные и создает новый объект в БД.
 
-
-def create_event(student, mentor, theme_name):
+    :param student: Прикрепляющийся словарь студента
+    :param mentor: Прикрепляющийся словарь ментора
+    :param theme_name: Название темы проекта
+    """
     data_event = {
         "id": "0",
 
@@ -52,7 +69,10 @@ def create_event(student, mentor, theme_name):
 
 @login_required
 def projects_page(request):
-    """Страница всех проектов"""
+    """
+    Страница всех проектов для преподавателя
+    Страница своего проекта для студента
+    """
     context = get_context(request, "Проекты")
     user_back = UserRequest().get_by_id(request.user.profile.uid)
     status = user_back["personStatus"]
@@ -67,6 +87,7 @@ def projects_page(request):
         if mentor:
             fullname = "{} {} {}".format(mentor["surname"], mentor["name"], mentor["patronymic"])
             context['mentor_fullname'] = fullname
+            context['has_mentor'] = True
 
     elif status == "mentor":
         students = StudentRequest().get_all()
@@ -90,6 +111,10 @@ def projects_page(request):
 # http://127.0.0.1:8000/project/b53b0c2b-4c5f-456b-85b9-c33976b6fed0
 @login_required
 def project_page(request, theme_id):
+    """
+    Страница одного проекта
+    TODO: Разбить на функции
+    """
     context = get_context(request, "Проект")
     user_back = UserRequest().get_by_id(request.user.profile.uid)
     context["user_back"] = user_back
@@ -114,16 +139,16 @@ def project_page(request, theme_id):
     is_free = current_student["statusPay"] == "free"
     is_pay = current_student["statusPay"] == "pay"
     # Заполнение данных: платная или бюджетная основа
+    current_student["status_pay"] = "Не указано"
     if is_free == "free":
         current_student["status_pay"] = "Бюджет"
     elif is_pay == "pay":
         current_student["status_pay"] = "Платная основа"
-    else:
-        current_student["status_pay"] = "Не указано"
 
     context["student"] = current_student
     context["theme_name"] = theme["themeName"]
 
+    #  Запрос на прикрепление студента
     if request.method == "POST" and user_back["personStatus"] == "mentor":
         type_request = request.POST.get("type_request")
         if type_request == "ADD":
@@ -160,8 +185,7 @@ def project_page(request, theme_id):
 
             return redirect("/projects")
 
-
-    #  Настройка кнопок на шаблоне
+    #  Настройка кнопок на шаблоне для преподавателя
     if user_back["personStatus"] == "mentor":
         mentor = MentorRequest().get_by_id(user_back["personID"])
         # Если проект уже составлен
@@ -170,7 +194,8 @@ def project_page(request, theme_id):
             context["register_btn_value"] = \
                 "Вы участвуете" if mentor["id"] == user_back["personID"] else "Проект составлен"
         # Если проект не составлен и есть свободные места
-        elif is_free and mentor["freeStudentsLeft"] > 0 or is_pay and mentor["paidStudentsLeft"] > 0 or mentor["allStudentsLeft"] > 0:
+        elif is_free and mentor["freeStudentsLeft"] > 0 or is_pay and mentor["paidStudentsLeft"] > 0 \
+                or mentor["allStudentsLeft"] > 0:
             context["register_btn_value"] = "Начать работу со студентом"
         # Если проект не составлен и нет свободных мест
         else:
@@ -187,7 +212,9 @@ def project_page(request, theme_id):
 
 @login_required
 def project_edit_page(request):
-    """Страница создания и редактирования проекта"""
+    """
+    Страница создания и редактирования проекта
+    """
     context = get_context(request, "Проект")
     template_path = 'pages/project/project_create.html'
     user_back = UserRequest().get_by_id(request.user.profile.uid)
