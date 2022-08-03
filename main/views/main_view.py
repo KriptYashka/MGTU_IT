@@ -32,7 +32,7 @@ def about_page(request):
 
 @login_required
 def profile_page(request):
-    """Страница профиля"""
+    """Страница профиля. Только для просмотра."""
     context = get_context(request, "Профиль")
     user_django = usertool.get_user_by_username(request.user.username)
     profile = user_django.profile
@@ -119,4 +119,13 @@ def profile_page(request):
         if context[key] == "None":
             context[key] = None
 
+    return render(request, template_path, context)
+
+@login_required
+def edit_profile_page(request):
+    """
+    Страница редактирования профиля
+    """
+    context = get_context(request, "О проекте")
+    template_path = 'pages/about.html'
     return render(request, template_path, context)
