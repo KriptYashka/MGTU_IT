@@ -282,22 +282,3 @@ if __name__ == '__main__':
     print(user.load("100422c2-4fb9-4817-adf8-d35cdd429a2e"))
     user.create(data)
 
-    freezer = ["potato", "cucumber", "milk"]
-
-    che_to_pohushat = "apple"
-    freezer.append(che_to_pohushat)
-
-    freezer = ["potato", "cucumber", "milk", "potato", "water"]
-    del_index = 2
-    freezer = freezer[:del_index] + freezer[del_index+1:]
-
-    # ['potato', 'cucumber', 'potato', 'water']
-
-    print(freezer)
-
-    dictionary = {
-        "Листок": ["Бумага", "С дерева"],
-        "Дерево": "Растение",
-        "Школа Программистов": "The Best",
-    }
-

@@ -34,7 +34,7 @@ def about_page(request):
 def profile_page(request):
     """Страница профиля"""
     context = get_context(request, "Профиль")
-    user_django = usertool.get_current_user(request.user.username)
+    user_django = usertool.get_user_by_username(request.user.username)
     profile = user_django.profile
     user_back = UserRequest().get_by_id(profile.uid)
 
