@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
-from main.views import main_view, registration_view, project_view
+from main.views import main_view, registration_view, project_view, admin_view
 
 
 urlpatterns = [
@@ -17,4 +17,6 @@ urlpatterns = [
     path('projects/', project_view.projects_page),
     path('project/', project_view.project_edit_page),
     path('project/<str:theme_id>', project_view.project_page),
+
+    path('project_connect/', admin_view.project_connect_page),
 ]

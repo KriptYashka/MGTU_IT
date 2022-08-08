@@ -12,7 +12,9 @@ from main.sitetools.backrequest import get_user_by_person
 
 
 def index_page(request):
-    """Главная страница"""
+    """
+    Главная страница
+    """
     context = get_context(request, "Главная", False)
     template_path = 'pages/index.html'
     count_mentor = len(MentorRequest().get_all())
@@ -24,7 +26,9 @@ def index_page(request):
 
 
 def about_page(request):
-    """Страница информации о сайте"""
+    """
+    Страница информации о сайте
+    """
     context = get_context(request, "О проекте")
     template_path = 'pages/about.html'
     return render(request, template_path, context)
@@ -32,7 +36,9 @@ def about_page(request):
 
 @login_required
 def profile_page(request):
-    """Страница профиля. Только для просмотра."""
+    """
+    Страница профиля. Только для просмотра.
+    """
     context = get_context(request, "Профиль")
     user_django = usertool.get_user_by_username(request.user.username)
     profile = user_django.profile
@@ -120,6 +126,7 @@ def profile_page(request):
             context[key] = None
 
     return render(request, template_path, context)
+
 
 @login_required
 def edit_profile_page(request):

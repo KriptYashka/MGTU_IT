@@ -113,45 +113,69 @@ def get_user_by_person(person_id):
 
 
 class ModelRequestBase:
-    def __init__(self, type_req):
-        self.id = None
+    """
+    Абстактный (в Питоне на уровне соглашений) класс моделей объектов БД
+    """
+
+    def __init__(self, obj_id, type_req):
+        self.id = obj_id
         self.TypeRequest = type_req
-        self.data = {"id": self.id}
+        self.convert_data = {}
 
     def load(self, obj_id):
-        """Находит объект в БД по id"""
+        """
+        Находит объект в БД по id
+        """
         obj = self.TypeRequest().get_by_id(obj_id)
         if obj is not None:
-             self.load_data_dict(obj)
+            self.load_data_dict(obj)
 
     def load_data_dict(self, data_dict):
-        """Загружает объект по набору данных словаря"""
-        for key in self.data:
-            if key in data_dict.keys():
-                self.data[key] = data_dict[key]
+        """
+        Загружает объект по набору данных словаря
+        """
+        for db_name, front_name in self.convert_data.items():
+            if db_name in data_dict.keys():
+                self.__setattr__(front_name, data_dict[db_name])
+
+    def get_db_data(self):
+        """
+        Возвращает словарь объекта, используемый в БД
+        :return: Словарь объекта
+        """
+        db_data = dict()
+        for db_name, front_name in self.convert_data.items():
+            db_data[db_name] = self.__getattribute__(front_name)
+        return db_data
 
     def create(self, data_dict=None):
-        """Сохранение объекта в БД"""
+        """
+        Сохранение объекта в БД
+        """
         if data_dict:
             self.load_data_dict(data_dict)
-        obj = self.TypeRequest().create(self.data)
+        obj = self.TypeRequest().create(self.get_db_data())
         if not obj:
             return Exception("Неверный запрос")
         # Обновление объекта
         self.load_data_dict(obj)
 
     def edit(self, data_dict=None):
-        """Изменение объекта в БД"""
+        """
+        Изменение объекта в БД
+        """
         if data_dict:
             self.load_data_dict(data_dict)
-        obj = self.TypeRequest().edit(self.data)
+        obj = self.TypeRequest().edit(self.get_db_data())
         if not obj:
             return Exception("Неверный запрос")
         # Обновление объекта
         self.load_data_dict(obj)
 
     def delete(self, uid=None):
-        """Удаление объекта из БД"""
+        """
+        Удаление объекта из БД
+        """
         cod = 400
         if uid is not None:
             self.id = uid
@@ -161,10 +185,26 @@ class ModelRequestBase:
             return Exception("Неверный запрос")
         del self
 
+    def normalize_convert_data(self):
+        """
+        Преобразует словарь в новый без ключевых слов "self" и значений после знака "="
+        """
+        for key in self.convert_data.keys():
+            index_equal = self.convert_data[key].rfind("=")  # Ищем последний знак "="
+            self.convert_data[key] = self.convert_data[key][5:index_equal]
+
+    def __bool__(self):
+        if self.id is None or self.id is id_none:
+            return False
+        return True
+
+    def __eq__(self, other):
+        return bool(self) is other
+
 
 class ModelRequestUser(ModelRequestBase):
-    def __init__(self):
-        super(ModelRequestUser, self).__init__(UserRequest)
+    def __init__(self, uid=None):
+        super(ModelRequestUser, self).__init__(uid, UserRequest)
         self.login = None
         self.password = None
         self.email = None
@@ -172,47 +212,29 @@ class ModelRequestUser(ModelRequestBase):
         self.person_id = None
         self.photo = None
 
-        self.data = {
-            "id": self.id,
-            "login": self.login,
-            "password": self.password,
-            "email": self.email,
-            "personStatus": self.person_status,
-            "personID": self.person_id,
-            "photo": self.photo,
+        #  Использование названия переменных по стандарту PEP8
+        self.convert_data = {
+            "id": f'{self.id=}',
+            "login": f'{self.login=}',
+            "password": f'{self.password=}',
+            "email": f'{self.email=}',
+            "personStatus": f'{self.person_status=}',
+            "personID": f'{self.person_id=}',
+            "photo": f'{self.photo=}',
         }
+        self.normalize_convert_data()
 
-        self.req_fields = {
-            "create": ["login", "password"]  # TODO: требуется узнать у Сарибека
-        }
+        # self.req_fields = {
+        #     "create": ["login", "password"]  # TODO: требуется узнать у бэкэндера
+        # }
 
-    # def load(self, obj_id):
-    #     super(ModelRequestUser, self).load(obj_id)
-
-    def load_data_dict(self, data_dict):
-        for key in self.data:
-            if key in data_dict.keys():
-                self.data[key] = data_dict[key]
-
-    def create(self, data_dict=None, model_class=UserRequest):
-        if data_dict:
-            self.load_data_dict(data_dict)
-        requirement = ["login", "password"]
-        for key in requirement:
-            if self.data[key] is None:
-                return Exception("Не введен логин или пароль")
-        user = UserRequest().create(self.data)
-        if not user:
-            return Exception("Неверный запрос")
+        if self.id is not None:
+            self.load(uid)
 
 
-    def edit(self, data_dict=None):
-        pass
-
-
-class ModelRequestStudent:
-    def __init__(self):
-        self.id = None
+class ModelRequestStudent(ModelRequestBase):
+    def __init__(self, uid=None):
+        super(ModelRequestStudent, self).__init__(uid, StudentRequest)
         self.name = None
         self.surname = None
         self.patronymic = None
@@ -224,10 +246,28 @@ class ModelRequestStudent:
         self.mentor_id = None
         self.interests_ids = None
 
+        self.convert_data = {
+            "id": f'{self.id=}',
+            "name": f'{self.name=}',
+            "surname": f'{self.surname=}',
+            "patronymic": f'{self.patronymic=}',
+            "birthDate": f'{self.birthdate=}',
+            "description": f'{self.description=}',
+            "statusPay": f'{self.status_pay=}',
+            "group": f'{self.group=}',
+            "themeID": f'{self.theme_id=}',
+            "mentorID": f'{self.mentor_id=}',
+            "interestsIDs": f'{self.interests_ids=}',
+        }
+        self.normalize_convert_data()
 
-class ModelRequestMentor:
-    def __init__(self):
-        self.id = None
+        if self.id is not None:
+            self.load(uid)
+
+
+class ModelRequestMentor(ModelRequestBase):
+    def __init__(self, uid=None):
+        super(ModelRequestMentor, self).__init__(uid, MentorRequest)
         self.name = None
         self.surname = None
         self.patronymic = None
@@ -240,34 +280,115 @@ class ModelRequestMentor:
         self.like_persons_ids = None
         self.dislike_persons_ids = None
 
+        self.convert_data = {
+            "id": f'{self.id=}',
+            "name": f'{self.name=}',
+            "surname": f'{self.surname=}',
+            "patronymic": f'{self.patronymic=}',
+            "birthDate": f'{self.birthdate=}',
+            "description": f'{self.description=}',
 
-class ModelRequestEvent:
-    def __init__(self):
-        self.id = None
-        self.name_student = None
-        self.surname_student = None
-        self.patronymic_student = None
-        self.birthdate_student = None
-        self.group_student = None
-        self.name_mentor = None
-        self.surname_mentor = None
-        self.patronymic_mentor = None
-        self.birthdate_mentor = None
-        self.category_id = None
-        self.category_name = None
-        self.theme_name = None
+            "paidStudentsLeft": f'{self.paid_students_left=}',
+            "freeStudentsLeft": f'{self.free_students_left=}',
+            "AllStudentsLeft": f'{self.all_students_left=}',
+            "interestsIDs": f'{self.interests_ids=}',
+            "likePersonsIDs": f'{self.like_persons_ids=}',
+            "DNLikePersonsIDs": f'{self.dislike_persons_ids=}',
+        }
+        self.normalize_convert_data()
 
-
-class ModelRequestTheme:
-    def __init__(self):
-        self.id = None
-        self.theme_name = None
+        if self.id is not None:
+            self.load(uid)
 
 
-class ModelRequestCategory:
-    def __init__(self):
-        self.id = None
-        self.category_name = None
+class ModelRequestEvent(ModelRequestBase):
+    class Student:
+        def __init__(self):
+            self.name = None
+            self.surname = None
+            self.patronymic = None
+            self.birthdate = None
+            self.group = None
+
+    class Mentor:
+        def __init__(self):
+            self.name = None
+            self.surname = None
+            self.patronymic = None
+            self.birthdate = None
+
+    class Category:
+        def __init__(self):
+            self.id = None
+            self.name = None
+
+    class Theme:
+        def __init__(self):
+            self.name = None
+
+    def __init__(self, event_id=None):
+        super(ModelRequestEvent, self).__init__(event_id, EventRequest)
+        self.student = self.Student()
+        self.mentor = self.Mentor()
+        self.category = self.Category()
+        self.theme = self.Theme()
+
+        self.convert_data = {
+            "id": f'{self.id=}',
+
+            "nameS": f'{self.student.name=}',
+            "surnameS": f'{self.student.surname=}',
+            "patronymicS": f'{self.student.patronymic=}',
+            "birthDateS": f'{self.student.birthdate=}',
+            "groupS": f'{self.student.group=}',
+
+            "nameM": f'{self.mentor.name=}',
+            "surnameM": f'{self.mentor.surname=}',
+            "patronymicM": f'{self.mentor.patronymic=}',
+            "birthDateM": f'{self.mentor.birthdate=}',
+
+            "categoryNameID": f'{self.category.id=}',  # TODO: Потребовать от бэкэндера нормально назвать поле!
+            "categoryName": f'{self.category.name=}',
+
+            "themeName": f'{self.theme.name=}',
+        }
+        self.normalize_convert_data()
+
+        if self.id is not None:
+            self.load(event_id)
+
+
+class ModelRequestTheme(ModelRequestBase):
+    def __init__(self, theme_id=None):
+        super(ModelRequestTheme, self).__init__(theme_id, ThemeRequest)
+        self.name = None
+
+        self.convert_data = {
+            "id": f'{self.id=}',
+            "themeName": f'{self.name=}',
+        }
+        self.normalize_convert_data()
+
+        if self.id is not None:
+            self.load(theme_id)
+
+
+class ModelRequestCategory(ModelRequestBase):
+    def __init__(self, category_id=None):
+        super(ModelRequestCategory, self).__init__(category_id, CategoryRequest)
+        self.name = None
+
+        self.convert_data = {
+            "id": f'{self.id=}',
+            "categoryName": f'{self.name=}',
+        }
+        self.normalize_convert_data()
+
+        if self.id is not None:
+            self.load(category_id)
+
+
+#  TODO: Сделать класс интересов
 
 
 if __name__ == '__main__':
@@ -281,4 +402,3 @@ if __name__ == '__main__':
     }
     print(user.load("100422c2-4fb9-4817-adf8-d35cdd429a2e"))
     user.create(data)
-

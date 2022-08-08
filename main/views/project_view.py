@@ -9,62 +9,9 @@ from django.utils import dateformat
 
 from main.forms import ThemeForm
 from main.sitetools.backrequest import MentorRequest, StudentRequest, UserRequest, \
-    CategoryRequest, ThemeRequest, EventRequest, id_none
-
-
-class Project:
-    """
-    Класс проекта, отображаемого на карточках.
-    """
-
-    def __init__(self, project_id: str, name: str, student):
-        self.id = project_id
-        self.name = name
-        self.student = student
-        self.path = f"img/article/{get_rand_num(project_id)}.jpg"
-
-
-def get_rand_num(uid: str):
-    """
-    Возвращает число в зависимости от id nользователя
-
-    :param uid: ID пользователя
-    :return: Число от 1 до 10 в зависимости от id пользователя
-    """
-    sum = 0
-    for symbol in uid:
-        if symbol.isnumeric():
-            sum += int(symbol)
-    return sum % 10 + 1
-
-
-def create_event(student: dict, mentor: dict, theme_name: str):
-    """
-    Передает данные и создает новый объект в БД.
-
-    :param student: Прикрепляющийся словарь студента
-    :param mentor: Прикрепляющийся словарь ментора
-    :param theme_name: Название темы проекта
-    """
-    data_event = {
-        "id": "0",
-
-        "nameS": student["name"],
-        "surnameS": student["surname"],
-        "patronymicS": student["patronymic"],
-        "birthDateS": student["birthDate"],
-        "groupS": student["group"],
-
-        "nameM": mentor["name"],
-        "surnameM": mentor["surname"],
-        "patronymicM": mentor["patronymic"],
-        "birthDateM": mentor["birthDate"],
-
-        "categoryNameID": id_none,
-        "categoryName": None,
-        "themeName": theme_name
-    }
-    EventRequest().create(data_event)
+    CategoryRequest, ThemeRequest, EventRequest, id_none, ModelRequestUser, ModelRequestStudent, ModelRequestTheme,\
+    ModelRequestMentor
+from main.sitetools.project import Project, create_event, get_all_projects
 
 
 @login_required
@@ -74,33 +21,32 @@ def projects_page(request):
     Страница своего проекта для студента
     """
     context = get_context(request, "Проекты")
-    user_back = UserRequest().get_by_id(request.user.profile.uid)
-    status = user_back["personStatus"]
-    context["status"] = status
-    if status == "student":
-        student = StudentRequest().get_by_id(user_back["personID"])
-        theme = ThemeRequest().get_by_id(student["themeID"])
-        if theme is not None:
-            context['theme_name'] = theme["themeName"]
+    user_back = ModelRequestUser(request.user.profile.uid)
+    context["status"] = user_back.person_status
 
-        mentor = MentorRequest().get_by_id(student["mentorID"])
+    if user_back.person_status == "student":
+        student = ModelRequestStudent(user_back.person_id)
+
+        # Вывод темы
+        theme = ModelRequestTheme(student.theme_id)
+        if theme:
+            context['theme_name'] = theme.name
+
+        # Вывод ментора
+        mentor = ModelRequestMentor(student.mentor_id)
         if mentor:
-            fullname = "{} {} {}".format(mentor["surname"], mentor["name"], mentor["patronymic"])
+            fullname = f"{mentor.surname} {mentor.name} {mentor.patronymic}"
             context['mentor_fullname'] = fullname
             context['has_mentor'] = True
 
-    elif status == "mentor":
-        students = StudentRequest().get_all()
-        my_projects = []
-        other_projects = []
-        for student in students:
-            if student["themeID"] != id_none:
-                theme = ThemeRequest().get_by_id(student["themeID"])
-                project = Project(theme["id"], theme["themeName"], student)
-                if student["mentorID"] == user_back["personID"]:
-                    my_projects.append(project)
-                else:
-                    other_projects.append(project)
+    elif user_back.person_status == "mentor":
+        projects = get_all_projects()
+        my_projects, other_projects = [], []
+        for project in projects:
+            if project.student["mentorID"] == user_back.person_id:
+                my_projects.append(project)
+            else:
+                other_projects.append(project)
         context["my_projects"] = my_projects
         context["projects"] = other_projects
 

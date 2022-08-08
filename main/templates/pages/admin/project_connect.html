@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% load static %}
+<div class="featured_candidates_area candidate_page_padding">
+            <div class="row">
+                <div class="col-lg-12 mt-5">
+                    <div class="section_title text-center mb-40">
+                        <h3>Проекты студентов</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {% if not projects %}
+                <div class="col-4 text-center mx-auto text-success">
+                На данный момент нет неприкрепленных тем студентов.
+                </div>
+                {% endif %}
+                {% for project in projects %}
+                <div class="col-4">
+                    <div class="card ml-5 mb-2" style="width: 18rem;min-height:450px">
+                      <img src="{% static project.path %}" class="card-img-top">
+                      <div class="card-body">
+                        <h5 class="card-title">{{project.name}}</h5>
+                        <p class="card-text">{{project.student.surname}} {{project.student.name}} {{project.student.patronymic}}</p>
+                        <p class="card-text text-muted">{{project.student.group}}</p>
+                        {% if project.id %}
+                        <a href="/project/{{project.id}}" class="btn btn-outline-primary">Перейти к теме</a>
+                        {% endif %}
+                      </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
