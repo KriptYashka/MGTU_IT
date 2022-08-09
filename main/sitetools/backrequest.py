@@ -140,7 +140,8 @@ class ModelRequestBase:
 
     def get_db_data(self):
         """
-        Возвращает словарь объекта, используемый в БД
+        Возвращает словарь объекта со всеми полями, ключи которые используются в БД
+
         :return: Словарь объекта
         """
         db_data = dict()
@@ -162,15 +163,15 @@ class ModelRequestBase:
 
     def edit(self, data_dict=None):
         """
-        Изменение объекта в БД
+        Изменение и сохранение объекта в БД
+
+        :param data_dict: Словарь данных, которые требуется изменить
         """
         if data_dict:
             self.load_data_dict(data_dict)
-        obj = self.TypeRequest().edit(self.get_db_data())
-        if not obj:
+        cod = self.TypeRequest().edit(self.get_db_data())
+        if cod != 200:
             return Exception("Неверный запрос")
-        # Обновление объекта
-        self.load_data_dict(obj)
 
     def delete(self, uid=None):
         """
@@ -246,6 +247,8 @@ class ModelRequestStudent(ModelRequestBase):
         self.mentor_id = None
         self.interests_ids = None
 
+        self.fullname = None
+
         self.convert_data = {
             "id": f'{self.id=}',
             "name": f'{self.name=}',
@@ -263,6 +266,7 @@ class ModelRequestStudent(ModelRequestBase):
 
         if self.id is not None:
             self.load(uid)
+            self.fullname = f"{self.surname} {self.name} {self.patronymic}"
 
 
 class ModelRequestMentor(ModelRequestBase):
@@ -280,6 +284,8 @@ class ModelRequestMentor(ModelRequestBase):
         self.like_persons_ids = None
         self.dislike_persons_ids = None
 
+        self.fullname = None
+
         self.convert_data = {
             "id": f'{self.id=}',
             "name": f'{self.name=}',
@@ -290,7 +296,7 @@ class ModelRequestMentor(ModelRequestBase):
 
             "paidStudentsLeft": f'{self.paid_students_left=}',
             "freeStudentsLeft": f'{self.free_students_left=}',
-            "AllStudentsLeft": f'{self.all_students_left=}',
+            "allStudentsLeft": f'{self.all_students_left=}',
             "interestsIDs": f'{self.interests_ids=}',
             "likePersonsIDs": f'{self.like_persons_ids=}',
             "DNLikePersonsIDs": f'{self.dislike_persons_ids=}',
@@ -299,6 +305,11 @@ class ModelRequestMentor(ModelRequestBase):
 
         if self.id is not None:
             self.load(uid)
+            self.fullname = f"{self.surname} {self.name} {self.patronymic}"
+
+    def is_has_slot(self):
+        if self.paid_students_left and self.free_students_left and self.all_students_left:
+            return self.paid_students_left > 0 or self.free_students_left > 0 or self.all_students_left
 
 
 class ModelRequestEvent(ModelRequestBase):
@@ -310,12 +321,16 @@ class ModelRequestEvent(ModelRequestBase):
             self.birthdate = None
             self.group = None
 
+            self.fullname = None
+
     class Mentor:
         def __init__(self):
             self.name = None
             self.surname = None
             self.patronymic = None
             self.birthdate = None
+
+            self.fullname = None
 
     class Category:
         def __init__(self):

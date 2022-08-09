@@ -147,7 +147,7 @@ h6 {
                         <div class="col-sm-4 bg-c-lite-green user-profile">
                             <div class="card-block text-center text-white">
                                 <div class="m-b-25"> <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius" alt="User-Profile-Image"> </div>
-                                <h6 class="f-w-600">{{student.full_name}}</h6>
+                                <h6 class="f-w-600">{{student.fullname}}</h6>
                                 <p style="color: #c3d7e8;">Студент</p> <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                             </div>
                         </div>
@@ -166,12 +166,15 @@ h6 {
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Дата рождения</p>
-                                        <h6 class="text-muted f-w-400">{{student.birthDate}}</h6>
+                                        <h6 class="text-muted f-w-400">{{student.birthdate}}</h6>
                                     </div>
                                     {% if user_back.personStatus == "mentor" %}
                                     <div class="col-sm-6">
                                         <p class="m-b-10 f-w-600">Состояние</p>
-                                        <h6 class="text-muted f-w-400">{{student.status_pay}}</h6>
+                                        <h6 class="text-muted f-w-400">
+                                            {% if student.status_pay == "paid" %}Платная основа{% endif %}
+                                            {% if student.status_pay == "free" %}Бюджетная основа{% endif %}
+                                        </h6>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -190,7 +193,7 @@ h6 {
                         <!-- Конец карточки пользователя -->
                     </div>
                 </div>
-                {% if user_back.personStatus == "mentor" %}
+                {% if user_back.person_status == "mentor" %}
                 <form method="POST">
                     {% csrf_token %}
                     <div class="d-grid gap-1 mx-auto col-12 text-center">

@@ -1,4 +1,4 @@
-from main.sitetools.backrequest import EventRequest, StudentRequest, ThemeRequest, id_none
+from main.sitetools.backrequest import EventRequest, StudentRequest, ThemeRequest, id_none, ModelRequestStudent
 
 
 class Project:
@@ -59,7 +59,6 @@ def create_event(student: dict, mentor: dict, theme_name: str):
 def get_all_projects():
     """
     Возвращает все проекты студентов.
-
     :return: Все проекты студентов
     """
     students = StudentRequest().get_all()
@@ -71,3 +70,20 @@ def get_all_projects():
             projects.append(project)
     return projects
 
+
+def get_student_by_theme_id(theme_id: str) -> ModelRequestStudent:
+    """
+    Возвращает студента, прикрепленного к теме
+
+    :param theme_id: ID темы
+    :return: Модель студента, прикрепленного к теме
+    """
+    students = StudentRequest().get_all()
+    student_dict = None
+    for student in students:
+        if student["themeID"] == theme_id:
+            student_dict = student
+            break
+    student = ModelRequestStudent()
+    student.load_data_dict(student_dict)
+    return student
