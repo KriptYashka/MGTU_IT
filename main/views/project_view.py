@@ -73,7 +73,6 @@ def project_page(request, theme_id):
 
     # Заполнение данных: ФИО, дата рождения
     student.fullname = f'{student.surname} {student.name} {student.patronymic}'
-    student.birthdate = student.birthdate[:10]
     context["student"] = student
     context["theme_name"] = theme.name
 

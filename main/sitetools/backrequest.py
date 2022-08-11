@@ -104,14 +104,6 @@ class CategoryRequest(BackRequest):
         super().__init__("category")
 
 
-def get_user_by_person(person_id):
-    users = UserRequest().get_all()
-    for user in users:
-        if user["personID"] == person_id:
-            return user
-    return None
-
-
 class ModelRequestBase:
     """
     Абстактный (в Питоне на уровне соглашений) класс моделей объектов БД
@@ -124,19 +116,25 @@ class ModelRequestBase:
 
     def load(self, obj_id):
         """
-        Находит объект в БД по id
+        Находит объект в БД по id и загружает данные
+
+        :return: Самого себя
         """
         obj = self.TypeRequest().get_by_id(obj_id)
         if obj is not None:
             self.load_data_dict(obj)
+        return self
 
     def load_data_dict(self, data_dict):
         """
         Загружает объект по набору данных словаря
+
+        :return: Самого себя
         """
         for db_name, front_name in self.convert_data.items():
             if db_name in data_dict.keys():
                 self.__setattr__(front_name, data_dict[db_name])
+        return self
 
     def get_db_data(self):
         """
@@ -152,6 +150,8 @@ class ModelRequestBase:
     def create(self, data_dict=None):
         """
         Сохранение объекта в БД
+
+        :return: Самого себя
         """
         if data_dict:
             self.load_data_dict(data_dict)
@@ -160,18 +160,21 @@ class ModelRequestBase:
             return Exception("Неверный запрос")
         # Обновление объекта
         self.load_data_dict(obj)
+        return self
 
     def edit(self, data_dict=None):
         """
         Изменение и сохранение объекта в БД
 
         :param data_dict: Словарь данных, которые требуется изменить
+        :return: Самого себя
         """
         if data_dict:
             self.load_data_dict(data_dict)
         cod = self.TypeRequest().edit(self.get_db_data())
         if cod != 200:
             return Exception("Неверный запрос")
+        return self
 
     def delete(self, uid=None):
         """
@@ -193,6 +196,9 @@ class ModelRequestBase:
         for key in self.convert_data.keys():
             index_equal = self.convert_data[key].rfind("=")  # Ищем последний знак "="
             self.convert_data[key] = self.convert_data[key][5:index_equal]
+
+    def __hash__(self):
+        return hash(self.id)
 
     def __bool__(self):
         if self.id is None or self.id is id_none:
@@ -248,6 +254,7 @@ class ModelRequestStudent(ModelRequestBase):
         self.interests_ids = None
 
         self.fullname = None
+        self.theme_name = None
 
         self.convert_data = {
             "id": f'{self.id=}',
@@ -267,6 +274,8 @@ class ModelRequestStudent(ModelRequestBase):
         if self.id is not None:
             self.load(uid)
             self.fullname = f"{self.surname} {self.name} {self.patronymic}"
+            # TODO: требуется со стороны Backend починить DateTime
+            self.birthdate = self.birthdate[:10]
 
 
 class ModelRequestMentor(ModelRequestBase):
@@ -306,6 +315,8 @@ class ModelRequestMentor(ModelRequestBase):
         if self.id is not None:
             self.load(uid)
             self.fullname = f"{self.surname} {self.name} {self.patronymic}"
+            # TODO: требуется со стороны Backend починить DateTime
+            self.birthdate = self.birthdate[:10]
 
     def is_has_slot(self):
         if self.paid_students_left and self.free_students_left and self.all_students_left:
@@ -371,6 +382,9 @@ class ModelRequestEvent(ModelRequestBase):
 
         if self.id is not None:
             self.load(event_id)
+            # TODO: требуется со стороны Backend починить DateTime
+            self.student.birthdate = self.student.birthdate[:10]
+            self.mentor.birthdate = self.mentor.birthdate[:10]
 
 
 class ModelRequestTheme(ModelRequestBase):
@@ -404,6 +418,23 @@ class ModelRequestCategory(ModelRequestBase):
 
 
 #  TODO: Сделать класс интересов
+
+
+def get_user_by_person(person_id) -> ModelRequestUser:
+    """
+    Возвращает пользователя по ID студента/ментора/администратора
+    Если пользователя нет - пустая модель пользователя (None)
+
+    :param person_id: ID студента/ментора/администратора
+    :return: Модель пользователя
+    """
+    users_dict = UserRequest().get_all()
+    result = ModelRequestUser()
+    for user_dict in users_dict:
+        if user_dict["personID"] == person_id:
+            result.load_data_dict(user_dict)
+            break
+    return result
 
 
 if __name__ == '__main__':
