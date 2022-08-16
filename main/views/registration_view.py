@@ -73,10 +73,21 @@ def register_mentor(data):
     return register_user(data, mentor["id"])
 
 
-def is_email_valid(e_mail):
-    """Проверка почты на валидность"""
+def register_admin(data):
+    return register_mentor(data)
+    # TODO: На Backend сделать администраторов. На данный момент (16.08.2022) пользователь не может создаться
+    #  без Person-сущности
+
+
+def is_email_valid(email):
+    """
+    Проверка почты на валидность
+
+    :parameter email: Электронная почта
+    :return: None (если нет совпадений) или Email (если есть совпадение)
+    """
     __email_re = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
-    return __email_re.match(e_mail)
+    return __email_re.match(email)
 
 
 def register_exception(_login, _password, _email):
@@ -92,7 +103,9 @@ def register_exception(_login, _password, _email):
 
 
 def registration_page(request):
-    """Регистрация"""
+    """
+    Страница регистрации
+    """
     context = get_context(request, "Регистрация")
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -115,6 +128,8 @@ def registration_page(request):
             register_mentor(form.data)
         elif status == "student":
             register_student(form.data)
+        elif status == "admin":
+            register_admin(form.data)
         else:
             error = "Добавлен несуществующий статус."
             context['res'] = error

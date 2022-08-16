@@ -64,7 +64,9 @@ class RegistrationForm(forms.Form):
         "data-placeholder": "Пароль"
     }
     status = forms.ChoiceField(label="Вид аккаунта", required=True,
-                               choices=(("mentor", "Преподаватель"), ("student", "Студент")),
+                               choices=(("mentor", "Преподаватель"),
+                                        ("student", "Студент"),
+                                        ("admin", "Администратор")),
                                widget=forms.Select(attrs=attrs))
     group = CommonFields.get_title_field("Группа (если студент)", False)
 
