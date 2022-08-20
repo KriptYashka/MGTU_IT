@@ -12,7 +12,9 @@ from main.sitetools.backrequest import UserRequest, StudentRequest, MentorReques
 from main.sitetools.backrequest import get_user_by_person
 
 
-def get_attached_user_students(mentor_id: str) -> dict[ModelRequestUser, ModelRequestStudent]:
+# def get_attached_user_students(mentor_id: str) -> dict[ModelRequestUser, ModelRequestStudent]:
+# TODO: Пока нет интернета, не могу исправить
+def get_attached_user_students(mentor_id: str) -> dict:
     """
     Возвращает словарь пользователей-студентов, прикрепленных к ментору
 
@@ -121,10 +123,7 @@ def profile_page(request):
     Страница профиля для просмотра информации
     """
     context = get_context(request, "Профиль")
-    template_path = 'pages/index.html'
-
-    user = ModelRequestUser(request.user.profile.uid)
-    context["user"] = user
+    template_path = None
 
     statuses = {
         "student": "Студент",
@@ -150,6 +149,14 @@ def profile_page(request):
             return render(request, template_path, context)
         context = get_profile_mentor_context(context, mentor)
         template_path = 'pages/profile_mentor.html'
+    elif current_status == "admin":  # TODO: Требуется сущность администратора
+        mentor = ModelRequestMentor(user.person_id)
+        if not mentor:
+            return render(request, template_path, context)
+        context = get_profile_mentor_context(context, mentor)
+        template_path = 'pages/profile_mentor.html'
+    else:
+        redirect("/")
 
     return render(request, template_path, context)
 

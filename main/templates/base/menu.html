@@ -23,8 +23,8 @@
                                         <li><a href="/">Главная</a></li>
                                         <li><a href="/about/">О сервисе</a></li>
                                         <li><a href="/projects/">Проекты</a></li>
-                                        {% if user.is_superuser %}
-                                        <li><a href="/admin/" class="text-info">Админ. Панель</a></li>
+                                        {% if user.person_status == "admin" %}
+                                        <li><a href="/project_connect/" class="text-info">Админ. Панель</a></li>
                                         {% endif %}
                                     </ul>
                                 </nav>
@@ -53,7 +53,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
