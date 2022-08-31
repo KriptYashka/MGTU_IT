@@ -8,9 +8,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils import dateformat
 
 from main.forms import ThemeForm
-from main.sitetools.backrequest import MentorRequest, StudentRequest, UserRequest, ThemeRequest, id_none, \
-    ModelRequestUser, ModelRequestStudent, ModelRequestTheme, ModelRequestMentor
-from main.sitetools.project import Project, create_event, get_all_projects, get_student_by_theme_id
+from main.sitetools.backrequest import ModelRequestUser, ModelRequestStudent, ModelRequestTheme, ModelRequestMentor, \
+    id_none
+from main.sitetools.project import get_all_projects, get_student_by_theme_id
 
 
 @login_required
